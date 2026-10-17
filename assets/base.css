@@ -1,0 +1,15 @@
+/* shasan.me base: full-viewport stage that holds one 16:10 game screen, scaled to fit. */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0b0d10;color:#e8ebf1;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{overflow:hidden;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+img{max-width:100%}
+.stage{position:fixed;inset:0;display:grid;place-items:center;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.screen{position:relative;width:min(100vw,160vh);width:min(100dvw,160dvh);aspect-ratio:16/10;overflow:hidden;container-type:inline-size;background:#000;user-select:none;-webkit-user-select:none;outline:none;-webkit-tap-highlight-color:transparent}
+.screen:focus-visible{box-shadow:inset 0 0 0 3px #f5f543}
+.screen canvas.px{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+.screen canvas.hd{position:absolute;inset:0;width:100%;height:100%}
+/* Portrait phones: a gentle hint that landscape gives a bigger view. */
+.rotate-hint{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:600 12px/1.3 system-ui,sans-serif;color:#b9bfcc;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:8px 14px;display:none;white-space:nowrap}
+@media (orientation:portrait) and (max-width:700px){.rotate-hint{display:block}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
