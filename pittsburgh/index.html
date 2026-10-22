@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pittsburgh · Sahil Hasan</title>
-<meta name="description" content="Explore Pittsburgh: three rivers, yellow bridges, the inclines and Carnegie Mellon, where Sahil Hasan earned his M.S. in Computer Science.">
+<meta name="description" content="Explore a hex map of Pittsburgh and find Carnegie Mellon, where Sahil Hasan earned his M.S. in Computer Science.">
 <meta name="theme-color" content="#0b0d10">
 <link rel="icon" href="../img/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,8 +185,8 @@
     {k:'strip',u:.48,v:.415,n:'Strip District',l:'Market stalls in old warehouses.'},
     {k:'cath',u:.585,v:.495,n:'Cathedral of Learning',l:'42 Gothic stories, next to CMU.'},
     {k:'cmu',u:.645,v:.53,n:'Carnegie Mellon',l:'Where Sahil earned his M.S. in Computer Science.'},
-    {k:'fence',u:.62,v:.575,n:'The Fence',l:'Painted overnight, again and again.'},
-    {k:'robot',u:.685,v:.495,n:'Robotics Institute',l:'CMU robots that roam.'},
+    {k:'fence',u:.62,v:.575,n:'The Fence',l:'Students repaint it, often overnight.'},
+    {k:'robot',u:.685,v:.495,n:'Robotics Institute',l:'Where CMU builds robots.'},
     {k:'grand',u:.30,v:.635,n:'Grandview Overlook',l:'The whole skyline at once.'}];
   LM.forEach(m=>{const t=m.k=='grand'?nearT(m.u,m.v,t=>t.t=='hill'):nearT(m.u,m.v,t=>t.t!='water'&&t.t!='cliff'&&t.t!='incline');m.i=t.i;if(m.k=='point')t.t='park'});
   const BH={cath:2.45,cmu:1.8,robot:1.55,point:1.6,incline:1.6};

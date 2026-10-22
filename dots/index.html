@@ -165,7 +165,7 @@
 </head>
 <body>
 <main class="stage">
-  <div class="screen s69" id="c69-scr" tabindex="0" aria-label="Founder TD. A tower defense where the map grows with the company. Hire people beside the roads to stop problems reaching Dots.">
+  <div class="screen s69" id="c69-scr" tabindex="0" aria-label="Founder TD, a tower defense about building Dots. Place hires beside the road to stop problems.">
     <canvas class="c69-cv"></canvas>
     <div class="c69-hud">
       <div class="c69-name"><b>SAHIL HASAN</b><span>Founder and CEO @ Dots</span></div>
@@ -238,7 +238,7 @@ const E={
  fail:{n:'Failed payout',hp:3,sp:80,r:11,cash:2,leak:.35,kids:['cell'],col:'#e0b040',tip:'Failed payout: retries. Payouts stops it.'},
  sanc:{n:'Sanctions hit',hp:6,sp:46,r:13,cash:4,leak:.6,armor:1,kids:['bad','cell'],col:'#2a3d66',tip:'Sanctions hit: armored. Tax breaks it.'},
  tin:{n:'TIN mismatch',hp:3,sp:66,r:11,cash:3,leak:.4,kids:['cell'],col:'#d9c9a8',tip:'TIN mismatch: turns into a Penalty. Use Tax.'},
- pen:{n:'Penalty',hp:12,sp:50,r:15,cash:6,leak:1.2,kids:['sheet'],col:'#c9302c',tip:'Penalty: tough. Hit it hard.'},
+ pen:{n:'Penalty',hp:12,sp:50,r:15,cash:6,leak:1.2,kids:['sheet'],col:'#c9302c',tip:'Penalty: high HP. Focus it.'},
  tools:{n:'Tool Sprawl',hp:300,sp:24,r:30,cash:60,leak:5,boss:1,drop:{every:3,kids:['tix','tix','sheet']},kids:['sheet','sheet','sheet','tix','tix','tix','tix'],col:'#4f6d8f',tip:'Tool Sprawl: drops spreadsheets.'},
  taxs:{n:'Tax Season',hp:520,sp:21,r:32,cash:90,leak:5,boss:1,drop:{every:2.6,kids:['tin','tin']},kids:['tin','tin','tin','tin','pen','sheet','sheet'],col:'#b5651d',tip:'Tax Season: Tax shreds it.'},
  dd:{n:'Due Diligence',hp:260,sp:18,r:34,cash:120,leak:6,boss:1,plates:30,kids:['copy'],col:'#3b4250',tip:'Due Diligence: crack plates with Onboard, Payouts, Tax.'},
@@ -470,7 +470,7 @@ function hit(e,dmg,src){if(e.dead)return;const T=E[e.k],tk=src.tk;
 function kill(e){e.dead=1;const T=E[e.k];st.cash+=T.cash;st.pops++;if(st.demo&&!st.demo.done)st.demo.score+=T.cash+1;
  fx.push({k:'pop',x:e.x,y:e.y-(T.boss?T.r:12),t:0,life:T.boss?.7:.28,col:T.col,big:T.boss?1:0});
  if(T.boss){fx.push({k:'txt',x:e.x,y:e.y-T.r*2,s:'+$'+T.cash,t:0,life:1.1});toast(T.n+' cleared')}
- if(e.k=='fail'&&!e.retried&&e.lastK!=='pay'){const c=spawn('fail',Math.max(e.d0,e.d-70),e.ln,e.d0,{retried:1});fx.push({k:'txt3',x:e.x,y:e.y-26,s:'RETRY',t:0,life:.9});if(!st.seenRetry){st.seenRetry=1;etShow('fail','A Failed payout retried. Hit it with <b>Dots Payouts</b> to reroute it for good.')}return}
+ if(e.k=='fail'&&!e.retried&&e.lastK!=='pay'){const c=spawn('fail',Math.max(e.d0,e.d-70),e.ln,e.d0,{retried:1});fx.push({k:'txt3',x:e.x,y:e.y-26,s:'RETRY',t:0,life:.9});if(!st.seenRetry){st.seenRetry=1;etShow('fail','Failed payout retried. Finish it with <b>Dots Payouts</b>.')}return}
  T.kids.forEach((kk,i)=>{const c=spawn(kk,kk=='copy'?e.d0:Math.max(e.d0,e.d-i*9),e.ln,e.d0);if(e.decamo)c.decamo=1})}
 function slowE(e,f){if(!f||e.dead||E[e.k].boss&&f<.5)return;e.slowT=1.5;e.slowF=Math.max(e.slowF,f)}
 function leak(T,e){st.mo-=T.leak*(st.endless?1+.1*st.eRounds:1);st.hurt=.6;if(e&&E[e.k].boss)toast(T.n+' got through');if(st.mo<=0){st.mo=0;finish(false)}}
@@ -595,7 +595,7 @@ function startEndless(){st.endless=1;st.eRounds=0;st.eR=endlessRound(1);if(best<
 function finish(win){if(over)return;over=true;running=false;bmOpen=false;bmEl.hidden=true;runs++;store.set(KR,runs);ban.classList.remove('show');
  const si=st.endless?6:Math.min(st.stage,6);const trail=ACTS.map((n,i)=>`<i class="${i<si||st.endless||i==si?'on':''}">${n}</i>`).join('');
  const head=st.endless?'190+ countries and counting':ACTS[si],sub=st.endless?'OUT OF RUNWAY · ENDLESS':'OUT OF RUNWAY',line=st.endless?`Endless: ${st.eRounds} rounds survived &middot; Best ${eBest}`:`Reached act ${si+1} of 7 &middot; ${st.pops} problems solved`;
- endEl.innerHTML=`<div class="c69-box"><small>${sub}</small><h3>${head}</h3><div class="c69-trail">${trail}</div><p>${line}</p><p class="c69-un">Alumni: ${unl.bear?'Golden Bear':'locked'} &middot; ${unl.tart?'Tartan':'locked'}</p><p>Dots was founded by Sahil Hasan (CEO) and Kartikye Mittal (CTO)</p><div class="c69-row"><button type="button" class="c69-again">Run again</button><a class="c69-li" href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LinkedIn</a><button type="button" class="c69-wd">Worlds</button></div></div>`;
+ endEl.innerHTML=`<div class="c69-box"><small>${sub}</small><h3>${head}</h3><div class="c69-trail">${trail}</div><p>${line}</p><p class="c69-un">Alumni: ${unl.bear?'Golden Bear':'locked'} &middot; ${unl.tart?'Tartan':'locked'}</p><p>Sahil Hasan (CEO) and Kartikye Mittal (CTO) founded Dots</p><div class="c69-row"><button type="button" class="c69-again">Run again</button><a class="c69-li" href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LinkedIn</a><button type="button" class="c69-wd">Worlds</button></div></div>`;
  endEl.hidden=false;closePanel();placing=null;moving=null;ghost=null;cardsUpd()}
 function hotfix(){if(!ctoOn()||st.hotCd>0||over)return;if(!running){toast('Hotfix: during rounds');return}st.hotCd=HOT_CD;st.hotT=HOT_T;
  for(const t of towers)if(t.k!='sales'&&t.k!='ops')fx.push({k:'ring',x:t.x,y:t.y-10,r:30,t:0,life:.45,col:CTO});
@@ -633,7 +633,7 @@ function renderPanel(){if(!sel)return;const b=TT[sel.k],s=stat(sel);let h=`<div 
  h+=`<button type="button" class="c69-x" aria-label="Close">&times;</button></div>${about(sel.k,s)}`;
  if(b.A){[b.A,b.B].forEach((arr,p)=>{const n=sel.u[p],o=sel.u[1-p];h+=`<div class="c69-path"><div class="c69-tiers" style="--pc:${p?'#4dd2ff':'#f5f543'}">${[0,1,2].map(i=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>`;
   if(n>=3)h+=`<span class="c69-max">MAX</span>`;else if(n==2&&o==3)h+=`<span class="c69-max">CLOSED<small>Only one path can reach tier 3</small></span>`;else{const[nm,c0,fx_]=arr[n],c=upCost(c0);h+=`<button type="button" class="c69-up${st.cash<c?' poor':''}" data-p="${p}"><span><b>${nm}</b><small>${fx_}</small></span><em>${c?'$'+c:'FREE'}</em></button>`}h+='</div>'})}
- else if(sel.k=='cto')h+=`<button type="button" class="c69-up c69-hu"><span><b>Hotfix</b><small>Every hire attacks 2x faster for 6s</small></span><em>${st.hotCd>0?Math.ceil(st.hotCd)+'s':'READY'}</em></button>`;
+ else if(sel.k=='cto')h+=`<button type="button" class="c69-up c69-hu"><span><b>Hotfix</b><small>All hires 2x speed for 6s</small></span><em>${st.hotCd>0?Math.ceil(st.hotCd)+'s':'READY'}</em></button>`;
  else if(sel.k=='hero')h+=`<button type="button" class="c69-up c69-pu"><span><b>Global Payout</b><small>Rains $ &euro; &yen; &pound; on every problem</small></span><em>${st.ultCd>0?Math.ceil(st.ultCd)+'s':'READY'}</em></button>`;
  h+=`<div class="c69-pf"><button type="button" class="c69-mv">Move</button>${FOUNDER(sel.k)?'':`<button type="button" class="c69-sell">Sell $${Math.floor(sel.spent*.7)}</button>`}</div>`;panel.innerHTML=h}
 function tryMove(px,py){const t=moving;if(!t)return;if(!inView(px,py)||!validAt(px,py,st.stage,t)){toast(revealed(px,py)?"Can't move there":'Not unlocked yet');return}
