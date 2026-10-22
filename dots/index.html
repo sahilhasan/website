@@ -295,6 +295,7 @@ const TT={
  tart:{n:'Tartan',c:560,r:230,rate:2.2,dmg:2,pier:1,shot:'laser',camo:1,col:'#C41230',acc:'cap',cap:'#C41230',tas:'#e8e8e8',shirt:'#6b6b6b',alum:'Carnegie Mellon · M.S. CS',st:0,d:'Long-range laser. Sees hidden.',gv:['bad','drop','dup']}};
 const ORDER=['eng','hero','cto','onb','sup','pay','sales','tax','ops','bear','tart'];
 const FOUNDER=kk=>kk=='hero'||kk=='cto';
+const BUY=ORDER.filter(kk=>!FOUNDER(kk));
 function stat(tw){const b=TT[tw.k],a=tw.u[0],c=tw.u[1];const s={tk:tw.k,r:b.r,rate:b.rate||0,dmg:b.dmg||0,pier:b.pier||1,armor:!!b.armor,camo:!!b.camo,chain:b.chain||0,jump:78,splash:b.splash||0,slow:0,aoe:0,bossMul:1};
  switch(tw.k){
   case'eng':if(a>=1)s.rate=2.4;if(a>=2){s.rate=3.4;s.pier=3}if(a>=3){s.rate=6;s.dmg=2}if(c>=1)s.r+=30;if(c>=2)s.camo=true;if(c>=3){s.armor=true;s.dmg+=2}break;
@@ -310,7 +311,7 @@ function stat(tw){const b=TT[tw.k],a=tw.u[0],c=tw.u[1];const s={tk:tw.k,r:b.r,ra
 
 /* ---- state ---- */
 let best=store.get(KB,0),unl=store.get(KU,{bear:0,tart:0})||{bear:0,tart:0},runs=store.get(KR,0),bestStage=store.get(KS,0),eBest=store.get(KE,0);
-let st,running=false,over=false,bmOpen=false,queue=[],enemies=[],towers=[],shots=[],fx=[],coins=[],sel=null,placing=null,moving=null,info=null,ghost=null,dragArm=false,justDown=false,tipDone=false,V=null,k=1,bg=null,bgOld=null,fog=null,banT=0,toastT=0,etT=0;
+let st,running=false,over=false,bmOpen=false,queue=[],enemies=[],towers=[],shots=[],fx=[],coins=[],sel=null,placing=null,moving=null,panelH='',info=null,ghost=null,dragArm=false,justDown=false,tipDone=false,V=null,k=1,bg=null,bgOld=null,fog=null,banT=0,toastT=0,etT=0;
 let cam=camFor(0),camA=cam,camB=cam,rev={t:1,s:0},seen=new Set(),fresh=new Set(),bmCards=[];
 const mk=(kk,px,py,spent)=>({k:kk,x:px,y:py,u:[0,0],cd:kk=='sales'?3:0,spent,face:1,lv:1,fire:0,s:null,mul:1,pAdd:0,det:false,off:false});
 const heroOn=()=>towers.some(t=>t.k=='hero');
@@ -539,7 +540,7 @@ function startRound(){if(running||over||bmOpen||st.wait)return;const cr=curR();q
  if(cr.demo)banner('DEMO DAY','60 seconds. Go.',1500);
  else if(cr.escort)banner('ESCORT','Deliver the payout',1500);
  else if(st.holiday>=0)banner('BANK HOLIDAY',LN[st.holiday].n+' Payouts offline',1900,true);
- else banner(boss?'BOSS · '+E[boss[0]].n:st.endless?'ENDLESS · ROUND '+(st.eRounds+1):'ROUND '+(st.round+1),st.endless?'190+ countries and counting':ACTS[cr.a],1300,!!boss)}
+ else banner(boss?'BOSS · '+E[boss[0]].n:st.endless?'ENDLESS · ROUND '+(st.eRounds+1):'ROUND '+(st.round+1),st.endless?'Hypergrowth':ACTS[cr.a],1300,!!boss)}
 function roundEnd(){running=false;st.wait=1;st.fxOn=0;st.holiday=-1;st.demo=st.demo&&st.demo.done?null:st.demo;st.cart=null;
  let inc=st.noInc?0:120+15*(Math.min(st.round,NR)+1+(st.endless?st.eRounds:0)),sinc=0,back=0;
  for(const t of towers){if(t.k=='sales'){sinc+=Math.round((20+10*t.u[0])*(st.closer?1.5:1));back+=.2+.06*t.u[0]}if(FOUNDER(t.k))t.lv=Math.min(10,(t.lv||1)+1)}
@@ -571,7 +572,7 @@ function board(a){bmOpen=true;closePanel();placing=null;moving=null;ghost=null;b
  bmEl.innerHTML=`<div class="c69-bmb"><small>BOARD MEETING · AFTER ${ACTS[a].toUpperCase()}</small><h3>Pick one</h3><div class="c69-bmc">${bmCards.map((c,i)=>`<button type="button" data-i="${i}"><i>${i+1}</i><b>${c.n}</b><span>${c.d}</span></button>`).join('')}</div></div>`;bmEl.hidden=false;cardsUpd()}
 function pickCard(i){if(!bmOpen||!bmCards[i])return;const c=bmCards[i];c.f();bmOpen=false;bmEl.hidden=true;toast(c.n);cardsUpd();holdNext()}
 function holdNext(){if(over||bmOpen)return;
- if(st.endless){const b=st.eR.g.find(g=>E[g[0]].boss);st.wait=0;banner(b?'BOSS · '+E[b[0]].n:'ENDLESS · ROUND '+(st.eRounds+1),'190+ countries and counting',0,!!b,'PRESS START');return}
+ if(st.endless){const b=st.eR.g.find(g=>E[g[0]].boss);st.wait=0;banner(b?'BOSS · '+E[b[0]].n:'ENDLESS · ROUND '+(st.eRounds+1),'Hypergrowth',0,!!b,'PRESS START');return}
  const r=st.round,cr=R[r],a=cr.a;if(a>st.stage){growTo(a);return}
  if(cr.pivot&&!st.pivoted){doPivot();return}
  if(r==0){stageCard(0);return}
@@ -594,7 +595,7 @@ function startEndless(){st.endless=1;st.eRounds=0;st.eR=endlessRound(1);if(best<
  banner('THE STATUS QUO FALLS','Endless mode',2400);setTimeout(()=>{if(!over)holdNext()},2500)}
 function finish(win){if(over)return;over=true;running=false;bmOpen=false;bmEl.hidden=true;runs++;store.set(KR,runs);ban.classList.remove('show');
  const si=st.endless?6:Math.min(st.stage,6);const trail=ACTS.map((n,i)=>`<i class="${i<si||st.endless||i==si?'on':''}">${n}</i>`).join('');
- const head=st.endless?'190+ countries and counting':ACTS[si],sub=st.endless?'OUT OF RUNWAY · ENDLESS':'OUT OF RUNWAY',line=st.endless?`Endless: ${st.eRounds} rounds survived &middot; Best ${eBest}`:`Reached act ${si+1} of 7 &middot; ${st.pops} problems solved`;
+ const head=st.endless?'Hypergrowth':ACTS[si],sub=st.endless?'OUT OF RUNWAY · ENDLESS':'OUT OF RUNWAY',line=st.endless?`Endless: ${st.eRounds} rounds survived &middot; Best ${eBest}`:`Reached act ${si+1} of 7 &middot; ${st.pops} problems solved`;
  endEl.innerHTML=`<div class="c69-box"><small>${sub}</small><h3>${head}</h3><div class="c69-trail">${trail}</div><p>${line}</p><p class="c69-un">Alumni: ${unl.bear?'Golden Bear':'locked'} &middot; ${unl.tart?'Tartan':'locked'}</p><p>Sahil Hasan (CEO) and Kartikye Mittal (CTO) founded Dots</p><div class="c69-row"><button type="button" class="c69-again">Run again</button><a class="c69-li" href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LinkedIn</a><button type="button" class="c69-wd">Worlds</button></div></div>`;
  endEl.hidden=false;closePanel();placing=null;moving=null;ghost=null;cardsUpd()}
 function hotfix(){if(!ctoOn()||st.hotCd>0||over)return;if(!running){toast('Hotfix: during rounds');return}st.hotCd=HOT_CD;st.hotT=HOT_T;
@@ -612,7 +613,7 @@ function etShow(kk,html){etEl.innerHTML=`<img src="${ICON[kk]}" alt=""><span>${h
 function enemyTip(kk){etShow(kk,E[kk].tip.replace(E[kk].n,'<b>'+E[kk].n+'</b>'))}
 function hideTip(){if(!tipDone){tipDone=true;tip.hidden=true}}
 function portrait(kk){const b=TT[kk],c=document.createElement('canvas');c.width=64;c.height=64;const x=c.getContext('2d');x.fillStyle='rgba(0,0,0,.4)';x.beginPath();x.ellipse(32,56,16,5,0,0,TAU);x.fill();x.strokeStyle=b.col;x.lineWidth=2;x.beginPath();x.ellipse(32,55,14,5,0,0,TAU);x.stroke();fig(x,32,55,1.45,b,0,{face:1});if(b.prod){x.fillStyle='#212121';circ(x,12,14,8);drawMark(x,12,14,11,DY)}return c}
-function buildTray(){const sc=cardsEl.scrollLeft;cardsEl.innerHTML='';ORDER.forEach((kk,i)=>{const b=TT[kk],lk=locked(kk);const btn=document.createElement('button');btn.type='button';btn.className='c69-card'+(b.alum?' alum':'')+(lk?' lock':'')+(fresh.has(kk)&&!lk?' fresh':'');btn.dataset.k=kk;btn.setAttribute('aria-label',b.n+(lk?' (locked)':FOUNDER(kk)?' (founder)':' $'+costOf(kk)));
+function buildTray(){const sc=cardsEl.scrollLeft;cardsEl.innerHTML='';BUY.forEach((kk,i)=>{const b=TT[kk],lk=locked(kk);const btn=document.createElement('button');btn.type='button';btn.className='c69-card'+(b.alum?' alum':'')+(lk?' lock':'')+(fresh.has(kk)&&!lk?' fresh':'');btn.dataset.k=kk;btn.setAttribute('aria-label',b.n+(lk?' (locked)':FOUNDER(kk)?' (founder)':' $'+costOf(kk)));
   const sp=document.createElement('span');sp.textContent=lk?'LOCKED':FOUNDER(kk)?'FOUNDER':'$'+costOf(kk);const n=document.createElement('i');n.textContent=i<9?i+1:i==9?0:'';btn.append(portrait(kk),sp,n);cardsEl.appendChild(btn)});cardsEl.scrollLeft=sc;fresh.clear();cardsUpd()}
 function cardsUpd(){cardsEl.querySelectorAll('.c69-card').forEach(c=>{const kk=c.dataset.k;c.classList.toggle('poor',!locked(kk)&&(st.cash<costOf(kk)||onMap(kk)));c.classList.toggle('sel',placing===kk)})}
 function lockMsg(kk){if(alLock(kk))return kk=='bear'?'Clear First customer to unlock':'Clear The Team to unlock';return 'Unlocks at '+ACTS[TT[kk].st]}
@@ -622,11 +623,11 @@ function bars(kk,s){if(kk=='sales')return[['CASH',Math.min(1,s.coin/s.every/25)]
 function about(kk,s){const b=TT[kk];const gv=b.gv.length?b.gv.map(e=>`<img src="${ICON[e]}" alt="${E[e].n}" title="${E[e].n}">`).join(''):`<em class="c69-none">${kk=='sales'?'Earns cash':'Boosts hires'}</em>`;
  const tags=[];if(s.camo)tags.push('Sees hidden');if(s.armor)tags.push('Hits armored');if(s.slow)tags.push('Slows');if(s.glob)tags.push('Map-wide');if(s.reroute)tags.push('Reroutes');if(b.prod)tags.push('Dots product');
  return `<p class="c69-desc">${b.d}</p><div class="c69-gv"><span>GOOD VS</span>${gv}${tags.map(t=>`<em>${t}</em>`).join('')}</div><div class="c69-bars">${bars(kk,s).map(([l,v])=>`<div class="c69-bar">${l}<i style="--v:${Math.round(v*100)}%"></i></div>`).join('')}</div>`}
-function showInfo(kk){info=kk;sel=null;panel.hidden=false;panel.className='c69-panel card';const b=TT[kk],lk=locked(kk),s=stat({k:kk,u:[0,0],lv:1});
+function showInfo(kk){info=kk;sel=null;panelH='';panel.hidden=false;panel.className='c69-panel card';const b=TT[kk],lk=locked(kk),s=stat({k:kk,u:[0,0],lv:1});
  panel.innerHTML=`<div class="c69-ph"><i style="background:${b.col}"></i><b>${b.n}</b>${FOUNDER(kk)?'<small>On the map</small>':`<small class="c69-cost">$${costOf(kk)}</small>`}${b.alum?`<small>${b.alum}</small>`:''}${lk?`<small class="c69-lk">${lockMsg(kk)}</small>`:placing===kk?'<small>Tap the map to place</small>':''}<button type="button" class="c69-x" aria-label="Close">&times;</button></div>${about(kk,s)}`}
 function hideInfo(){if(info&&!sel){info=null;panel.hidden=true}}
-function openPanel(t){sel=t;info=null;placing=null;ghost=null;panel.className='c69-panel';panel.hidden=false;renderPanel();cardsUpd()}
-function closePanel(){sel=null;info=null;panel.hidden=true}
+function openPanel(t){sel=t;info=null;placing=null;ghost=null;panel.className='c69-panel';panel.hidden=false;panelH='';renderPanel();cardsUpd()}
+function closePanel(){sel=null;info=null;panel.hidden=true;panelH=''}
 function renderPanel(){if(!sel)return;const b=TT[sel.k],s=stat(sel);let h=`<div class="c69-ph"><i style="background:${b.col}"></i><b>${b.n}</b>`;
  if(b.alum)h+=`<small>${b.alum}</small>`;if(sel.k=='hero')h+=`<small>LV ${sel.lv} &middot; Founder and CEO @ Dots</small>`;if(sel.k=='cto')h+=`<small>LV ${sel.lv} &middot; Co-founder and CTO @ Dots</small>`;
  if(sel.k=='sales')h+=`<small>+$${Math.round(s.coin*(st.closer?1.5:1))} every ${s.every}s</small>`;if(sel.k=='ops')h+=`<small>+${Math.round(s.buff*100)}% speed nearby</small>`;if(sel.off)h+=`<small class="c69-lk">Bank holiday: offline</small>`;
@@ -635,7 +636,7 @@ function renderPanel(){if(!sel)return;const b=TT[sel.k],s=stat(sel);let h=`<div 
   if(n>=3)h+=`<span class="c69-max">MAX</span>`;else if(n==2&&o==3)h+=`<span class="c69-max">CLOSED<small>Only one path can reach tier 3</small></span>`;else{const[nm,c0,fx_]=arr[n],c=upCost(c0);h+=`<button type="button" class="c69-up${st.cash<c?' poor':''}" data-p="${p}"><span><b>${nm}</b><small>${fx_}</small></span><em>${c?'$'+c:'FREE'}</em></button>`}h+='</div>'})}
  else if(sel.k=='cto')h+=`<button type="button" class="c69-up c69-hu"><span><b>Hotfix</b><small>All hires 2x speed for 6s</small></span><em>${st.hotCd>0?Math.ceil(st.hotCd)+'s':'READY'}</em></button>`;
  else if(sel.k=='hero')h+=`<button type="button" class="c69-up c69-pu"><span><b>Global Payout</b><small>Rains $ &euro; &yen; &pound; on every problem</small></span><em>${st.ultCd>0?Math.ceil(st.ultCd)+'s':'READY'}</em></button>`;
- h+=`<div class="c69-pf"><button type="button" class="c69-mv">Move</button>${FOUNDER(sel.k)?'':`<button type="button" class="c69-sell">Sell $${Math.floor(sel.spent*.7)}</button>`}</div>`;panel.innerHTML=h}
+ h+=`<div class="c69-pf"><button type="button" class="c69-mv">Move</button>${FOUNDER(sel.k)?'':`<button type="button" class="c69-sell">Sell $${Math.floor(sel.spent*.7)}</button>`}</div>`;if(h!==panelH){panelH=h;panel.innerHTML=h}}
 function tryMove(px,py){const t=moving;if(!t)return;if(!inView(px,py)||!validAt(px,py,st.stage,t)){toast(revealed(px,py)?"Can't move there":'Not unlocked yet');return}
  t.x=px;t.y=py;fx.push({k:'ring',x:px,y:py-10,r:30,t:0,life:.35,col:TT[t.k].col});moving=null;ghost=null;cardsUpd()}
 function upgrade(tw,p){const b=TT[tw.k];if(!b.A)return;const n=tw.u[p]+1,o=tw.u[1-p];if(n>3||(n==3&&o==3))return;const c=upCost((p?b.B:b.A)[n-1][1]);if(st.cash<c){toast('Need $'+c);return}
@@ -663,7 +664,7 @@ function chips(){const c=[];
 function hud(){if(st.cash!==lc){lc=st.cash;cashEl.textContent=st.cash;cardsUpd();if(sel)renderPanel()}
  if(st.mo!==lw){lw=st.mo;runEl.textContent=Math.max(0,st.mo).toFixed(1);runBar.style.setProperty('--w',Math.min(100,Math.max(0,st.mo)/12*100)+'%')}
  const rk=st.endless?1000+st.eRounds:Math.min(st.round,NR-1);if(rk!==lr){lr=rk;rndEl.textContent=st.endless?'ENDLESS · ROUND '+(st.eRounds+1):'ROUND '+(rk+1)+'/'+NR}
- const sn=st.endless?'190+ countries and counting':ACTS[st.stage];if(stgEl.textContent!==sn){stgEl.textContent=sn;[...pipsEl.children].forEach((p,i)=>p.classList.toggle('on',i<=st.stage))}
+ const sn=st.endless?'Hypergrowth':ACTS[st.stage];if(stgEl.textContent!==sn){stgEl.textContent=sn;[...pipsEl.children].forEach((p,i)=>p.classList.toggle('on',i<=st.stage))}
  const hon=heroOn();ultB.hidden=!hon;if(hon){const p=Math.round((1-Math.max(0,st.ultCd)/ULT_CD)*40)/40;if(p!==lu){lu=p;ultB.style.setProperty('--p',p);ultB.classList.toggle('ready',p>=1);if(sel&&sel.k=='hero')renderPanel()}}
  const con=ctoOn();hotB.hidden=!con;if(con){const p=Math.round((1-Math.max(0,st.hotCd)/HOT_CD)*40)/40,live=st.hotT>0;if(p!==lh||live!==lhl){lh=p;lhl=live;hotB.style.setProperty('--p',p);hotB.classList.toggle('ready',p>=1&&!live);hotB.classList.toggle('live',live);if(sel&&sel.k=='cto')renderPanel()}}
  const g=running||over||bmOpen||!!st.wait;if(g!==lg){lg=g;goB.disabled=g;goB.classList.toggle('pulse',!g)}chips()}
@@ -737,7 +738,12 @@ cardsEl.addEventListener('pointerover',ev=>{const c=ev.target.closest('.c69-card
 cardsEl.addEventListener('pointerout',ev=>{const c=ev.target.closest('.c69-card');if(!c||ev.pointerType!=='mouse'||placing)return;if(!ev.relatedTarget||!c.contains(ev.relatedTarget))hideInfo()});
 el.addEventListener('pointerup',ev=>{if(dragArm){dragArm=false;if(ev.target===cv&&placing){const[px,py]=wpos(ev);tryPlace(placing,px,py);justDown=false}}if(!(ev.target.closest&&ev.target.closest('.c69-card')))justDown=false});
 cardsEl.addEventListener('click',ev=>{const c=ev.target.closest('.c69-card');if(!c)return;if(lpDone){lpDone=false;return}if(justDown){justDown=false;return}togglePlacing(c.dataset.k)});
-panel.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.classList.contains('c69-x')){closePanel();placing=null;cardsUpd();return}if(!sel)return;if(b.classList.contains('c69-pu'))ult();else if(b.classList.contains('c69-hu'))hotfix();else if(b.classList.contains('c69-up'))upgrade(sel,+b.dataset.p);else if(b.classList.contains('c69-sell'))sell(sel);else if(b.classList.contains('c69-mv')){moving=sel;placing=null;ghost=null;closePanel();toast('Tap a new spot')}});
+let panelDown=null;
+const btnKey=b=>b.className.replace(/\s*poor/,'')+'|'+(b.dataset.p||'');
+panel.addEventListener('pointerdown',ev=>{const b=ev.target.closest('button');panelDown=b?{key:btnKey(b),t:performance.now()}:null});
+panel.addEventListener('click',ev=>{let b=ev.target.closest('button');
+ if(!b&&panelDown&&performance.now()-panelDown.t<1500)b=[...panel.querySelectorAll('button')].find(x=>btnKey(x)==panelDown.key);
+ panelDown=null;if(!b)return;if(b.classList.contains('c69-x')){closePanel();placing=null;cardsUpd();return}if(!sel)return;if(b.classList.contains('c69-pu'))ult();else if(b.classList.contains('c69-hu'))hotfix();else if(b.classList.contains('c69-up'))upgrade(sel,+b.dataset.p);else if(b.classList.contains('c69-sell'))sell(sel);else if(b.classList.contains('c69-mv')){moving=sel;placing=null;ghost=null;closePanel();toast('Tap a new spot')}});
 bmEl.addEventListener('click',ev=>{const b=ev.target.closest('button[data-i]');if(b)pickCard(+b.dataset.i)});
 goB.addEventListener('click',startRound);
 ffB.addEventListener('click',()=>{st.speed=st.speed==1?3:1;ffB.textContent=st.speed+'x';ffB.classList.toggle('on',st.speed>1)});
@@ -745,7 +751,7 @@ ultB.addEventListener('click',ult);hotB.addEventListener('click',hotfix);
 endEl.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.classList.contains('c69-again'))newGame();else if(b.classList.contains('c69-wd'))worlds()});
 document.addEventListener('keydown',ev=>{const tg=ev.target;if(ev.metaKey||ev.ctrlKey||ev.altKey)return;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'||tg.isContentEditable))return;const onCtl=tg!==el&&tg!==document.body&&(tg.tagName=='BUTTON'||tg.tagName=='A');const key=ev.key;
  if(bmOpen){if(/^[1-3]$/.test(key)){pickCard(+key-1);ev.preventDefault()}return}
- if(/^[0-9]$/.test(key)){const kk=ORDER[key=='0'?9:+key-1];if(kk)togglePlacing(kk);ev.preventDefault();return}
+ if(/^[0-9]$/.test(key)){const kk=BUY[key=='0'?9:+key-1];if(kk)togglePlacing(kk);ev.preventDefault();return}
  if(key=='Escape'){placing=null;moving=null;ghost=null;closePanel();cardsUpd();ev.preventDefault();return}
  if(onCtl)return;
  if(key==' '||key=='Enter'){if(over)newGame();else if(!running)startRound();else ffB.click();ev.preventDefault()}
