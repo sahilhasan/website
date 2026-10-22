@@ -97,6 +97,7 @@
 .s69 .c69-max small{display:block;font-weight:500;letter-spacing:0;color:#8a7a5a}
 .s69 .c69-pf{display:flex;justify-content:flex-end;align-items:center;gap:1cqw;color:#c9a45a}
 .s69 .c69-pf span{margin-right:auto}
+.s69 .c69-mv{background:#1d2a33;border:.2cqw solid #4dd2ff;color:#d6f3ff;border-radius:.5cqw;padding:.45cqw 1.2cqw;font:600 max(9px,1.4cqw) 'Barlow Condensed',sans-serif;cursor:pointer;min-height:26px;margin-right:auto}
 .s69 .c69-sell{background:#3a1a14;border:.2cqw solid #8a3a2a;color:#ffd0c4;border-radius:.5cqw;padding:.45cqw 1.2cqw;font:600 max(9px,1.4cqw) 'Barlow Condensed',sans-serif;cursor:pointer;min-height:26px}
 .s69 .c69-ban{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%) scale(.96);text-align:center;pointer-events:none;opacity:0;transition:opacity .3s,transform .3s;display:flex;flex-direction:column;align-items:center;gap:.35cqw;background:rgba(10,8,6,.8);border-top:.25cqw solid #c9a45a;border-bottom:.25cqw solid #c9a45a;padding:.9cqw 5cqw;white-space:nowrap;max-width:94%}
 .s69 .c69-ban.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -227,22 +228,22 @@ function camFor(s){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(let i=0;i<=s;i++){const
 
 /* ---- problems (from the problems Dots solves) ---- */
 const E={
- cell:{n:'Cell',hp:1,sp:84,r:9,cash:1,leak:.08,kids:[],col:'#3fa34d',tip:'A stray Cell. Anything pops it.'},
- row:{n:'Row',hp:2,sp:74,r:11,cash:1,leak:.15,kids:['cell','cell'],col:'#2e8b47',tip:'A Row splits into cells.'},
- sheet:{n:'Spreadsheet',hp:4,sp:52,r:13,cash:2,leak:.35,kids:['row','row'],col:'#1e7b3a',tip:'Spreadsheets are brittle: they split into rows, then cells.'},
- drop:{n:'Drop-off',hp:2,sp:150,r:10,cash:2,leak:.3,kids:['cell'],col:'#ff8a3d',tip:'Drop-offs are fast. Dots Onboard slows them down.'},
- bad:{n:'Bad actor',hp:3,sp:100,r:10,cash:2,leak:.35,camo:1,kids:['cell'],col:'#5b3a7a',tip:'Bad actors are hidden. Dots Onboard reveals them.'},
- dup:{n:'Duplicate',hp:3,sp:78,r:11,cash:2,leak:.25,kids:[],col:'#5b7cfa',tip:'Duplicates copy themselves. Pop them fast; Dots Onboard merges them.'},
- tix:{n:'Where’s my money?',hp:1,sp:128,r:8,cash:1,leak:.05,kids:[],col:'#f2f2f2',tip:'Where’s my money? tickets swarm. Support clears them.'},
- fail:{n:'Failed payout',hp:3,sp:80,r:11,cash:2,leak:.35,kids:['cell'],col:'#e0b040',tip:'Failed payouts retry once. Dots Payouts reroutes them for good.'},
- sanc:{n:'Sanctions hit',hp:6,sp:46,r:13,cash:4,leak:.6,armor:1,kids:['bad','cell'],col:'#2a3d66',tip:'Sanctions hits are armored. Dots Tax or Onboard screening breaks them.'},
- tin:{n:'TIN mismatch',hp:3,sp:66,r:11,cash:3,leak:.4,kids:['cell'],col:'#d9c9a8',tip:'TIN mismatches become Penalties halfway. Dots Tax catches them early.'},
- pen:{n:'Penalty',hp:12,sp:50,r:15,cash:6,leak:1.2,kids:['sheet'],col:'#c9302c',tip:'A Penalty: a TIN mismatch that got too far. Hit it hard.'},
- tools:{n:'Tool Sprawl',hp:300,sp:24,r:30,cash:60,leak:5,boss:1,drop:{every:3,kids:['tix','tix','sheet']},kids:['sheet','sheet','sheet','tix','tix','tix','tix'],col:'#4f6d8f',tip:'Tool Sprawl: separate tools that drop spreadsheets and tickets.'},
- taxs:{n:'Tax Season',hp:520,sp:21,r:32,cash:90,leak:5,boss:1,drop:{every:2.6,kids:['tin','tin']},kids:['tin','tin','tin','tin','pen','sheet','sheet'],col:'#b5651d',tip:'Tax Season drops TIN mismatches. Dots Tax shreds it.'},
- dd:{n:'Due Diligence',hp:260,sp:18,r:34,cash:120,leak:6,boss:1,plates:30,kids:['copy'],col:'#3b4250',tip:'Due Diligence: crack each plate with Dots Onboard, Payouts and Tax.'},
- copy:{n:'The Copycat',hp:340,sp:26,r:26,cash:100,leak:6,boss:1,walk:1,kids:['dup','dup','dup','dup'],col:'#8a8f99',tip:'The Copycat copies your most-used hire and is immune to it.'},
- quo:{n:'The Status Quo',hp:1100,sp:18,r:40,cash:150,leak:99,boss:1,kids:['tools','sanc','sanc','sanc','pen','pen'],col:'#4a3540',tip:'The Status Quo: the last boss. Save Global Payout for it.'}};
+ cell:{n:'Cell',hp:1,sp:84,r:9,cash:1,leak:.08,kids:[],col:'#3fa34d',tip:'Cell: one hit.'},
+ row:{n:'Row',hp:2,sp:74,r:11,cash:1,leak:.15,kids:['cell','cell'],col:'#2e8b47',tip:'Row: splits into cells.'},
+ sheet:{n:'Spreadsheet',hp:4,sp:52,r:13,cash:2,leak:.35,kids:['row','row'],col:'#1e7b3a',tip:'Spreadsheet: splits into rows.'},
+ drop:{n:'Drop-off',hp:2,sp:150,r:10,cash:2,leak:.3,kids:['cell'],col:'#ff8a3d',tip:'Drop-off: fast. Onboard slows it.'},
+ bad:{n:'Bad actor',hp:3,sp:100,r:10,cash:2,leak:.35,camo:1,kids:['cell'],col:'#5b3a7a',tip:'Bad actor: hidden. Onboard reveals it.'},
+ dup:{n:'Duplicate',hp:3,sp:78,r:11,cash:2,leak:.25,kids:[],col:'#5b7cfa',tip:'Duplicate: clones itself. Onboard merges.'},
+ tix:{n:'Where’s my money?',hp:1,sp:128,r:8,cash:1,leak:.05,kids:[],col:'#f2f2f2',tip:'Tickets swarm. Support clears them.'},
+ fail:{n:'Failed payout',hp:3,sp:80,r:11,cash:2,leak:.35,kids:['cell'],col:'#e0b040',tip:'Failed payout: retries. Payouts stops it.'},
+ sanc:{n:'Sanctions hit',hp:6,sp:46,r:13,cash:4,leak:.6,armor:1,kids:['bad','cell'],col:'#2a3d66',tip:'Sanctions hit: armored. Tax breaks it.'},
+ tin:{n:'TIN mismatch',hp:3,sp:66,r:11,cash:3,leak:.4,kids:['cell'],col:'#d9c9a8',tip:'TIN mismatch: turns into a Penalty. Use Tax.'},
+ pen:{n:'Penalty',hp:12,sp:50,r:15,cash:6,leak:1.2,kids:['sheet'],col:'#c9302c',tip:'Penalty: tough. Hit it hard.'},
+ tools:{n:'Tool Sprawl',hp:300,sp:24,r:30,cash:60,leak:5,boss:1,drop:{every:3,kids:['tix','tix','sheet']},kids:['sheet','sheet','sheet','tix','tix','tix','tix'],col:'#4f6d8f',tip:'Tool Sprawl: drops spreadsheets.'},
+ taxs:{n:'Tax Season',hp:520,sp:21,r:32,cash:90,leak:5,boss:1,drop:{every:2.6,kids:['tin','tin']},kids:['tin','tin','tin','tin','pen','sheet','sheet'],col:'#b5651d',tip:'Tax Season: Tax shreds it.'},
+ dd:{n:'Due Diligence',hp:260,sp:18,r:34,cash:120,leak:6,boss:1,plates:30,kids:['copy'],col:'#3b4250',tip:'Due Diligence: crack plates with Onboard, Payouts, Tax.'},
+ copy:{n:'The Copycat',hp:340,sp:26,r:26,cash:100,leak:6,boss:1,walk:1,kids:['dup','dup','dup','dup'],col:'#8a8f99',tip:'Copycat: immune to your top hire.'},
+ quo:{n:'The Status Quo',hp:1100,sp:18,r:40,cash:150,leak:99,boss:1,kids:['tools','sanc','sanc','sanc','pen','pen'],col:'#4a3540',tip:'Status Quo: save Global Payout.'}};
 const PROD={onb:['Dots Onboard','#b388ff','ON'],pay:['Dots Payouts','#ffd84d','PAY'],tax:['Dots Tax','#e0884a','TAX']};
 
 /* ---- acts and rounds: [kind,count,gap,start,lane] ---- */
@@ -264,33 +265,33 @@ const R=[
  {a:6,chaos:1,g:[['sanc',16,.45,0,3],['dup',14,.45,2,4],['sheet',20,.3,3,0],['taxs',1,1,6,2],['quo',1,1,14,0]]}];
 const NR=R.length;
 const SC=[
- {l:['Two founders: Sahil (CEO) and Kartikye (CTO)','The interview: fast waves of spreadsheets','Hold the line to get in']},
- {l:['Accepted (S21): YC office hours are on','New hires: Dots Onboard and Support','Mid-act the road pivots. Your hires stay.'],h:['onb','sup']},
- {l:['New path: Enterprise','New hires: Dots Payouts and Sales','Escort the first payout to the customer'],h:['pay','sales']},
- {l:['60 seconds on stage','Your score sets the Series A raise','Last act with YC office hours']},
- {l:['New path: Compliance','New hires: Dots Tax and Ops','Boss: Tax Season'],h:['tax','ops'],cash:250},
+ {l:['Sahil + Kartikye','Survive the interview']},
+ {l:['New: Onboard, Support','The road will pivot'],h:['onb','sup']},
+ {l:['New: Payouts, Sales','Escort the first payout'],h:['pay','sales']},
+ {l:['60 seconds','Score sets your raise']},
+ {l:['New: Tax, Ops','Boss: Tax Season'],h:['tax','ops'],cash:250},
  {l:['Boss: Due Diligence','Then: The Copycat']},
- {l:['New paths: International x2','FX swings and bank holidays','Boss: The Status Quo'],cash:400}];
+ {l:['FX swings, bank holidays','Boss: The Status Quo'],cash:400}];
 
 /* ---- hires ---- */
 const TT={
- eng:{n:'Engineer',c:200,r:130,rate:1.6,dmg:1,pier:2,shot:'dart',col:'#4dd2ff',acc:'laptop',shirt:'#2f6db5',st:0,d:'APIs and SDKs. Throws fast darts at the first problem in range.',gv:['sheet','row','tix'],
+ eng:{n:'Engineer',c:200,r:130,rate:1.6,dmg:1,pier:2,shot:'dart',col:'#4dd2ff',acc:'laptop',shirt:'#2f6db5',st:0,d:'Fast darts.',gv:['sheet','row','tix'],
   A:[['REST API',120,'+50% fire rate'],['SDKs',320,'+40% rate, +1 pierce'],['Webhooks',950,'Rapid fire, +1 damage']],B:[['Sandbox',90,'+30 range'],['Monitoring',220,'Sees hidden'],['Refactor',1100,'Hits armored, +2 damage']]},
- hero:{n:'Sahil',c:0,r:150,rate:1.2,dmg:2,pier:1,shot:'mark',armor:1,camo:1,col:DY,acc:'founder',shirt:'#212121',st:0,d:'Founder and CEO. Sees hidden, hits armored, levels up every round. Active: Global Payout. Passive: Close the deal (+$40 a round).',gv:['sanc','bad','quo']},
- cto:{n:'Kartikye',c:0,r:140,rate:1.6,dmg:1,pier:2,shot:'code',camo:1,col:CTO,acc:'cto',shirt:'#1d5f6b',st:0,d:'Kartikye Mittal, co-founder and CTO. Fast code shots that see hidden. Active: Hotfix. Passive: Engineers near him hit armored.',gv:['bad','dup','cell']},
- onb:{n:'Dots Onboard',c:300,r:110,rate:.62,dmg:1,shot:'pulse',col:'#b388ff',acc:'dish',shirt:'#5a3d8a',st:1,prod:1,d:'Pulses damage, reveals Bad actors for every hire in its circle, slows Drop-offs and merges Duplicates.',gv:['bad','drop','dup'],
+ hero:{n:'Sahil',c:0,r:150,rate:1.2,dmg:2,pier:1,shot:'mark',armor:1,camo:1,col:DY,acc:'founder',shirt:'#212121',st:0,d:'CEO. Global Payout. +$40 a round.',gv:['sanc','bad','quo']},
+ cto:{n:'Kartikye',c:0,r:140,rate:1.6,dmg:1,pier:2,shot:'code',camo:1,col:CTO,acc:'cto',shirt:'#1d5f6b',st:0,d:'CTO. Hotfix. Nearby Engineers hit armor.',gv:['bad','dup','cell']},
+ onb:{n:'Dots Onboard',c:300,r:110,rate:.62,dmg:1,shot:'pulse',col:'#b388ff',acc:'dish',shirt:'#5a3d8a',st:1,prod:1,d:'Reveals bad actors. Slows drop-offs.',gv:['bad','drop','dup'],
   A:[['KYC',180,'Strips hidden, +1 damage'],['Sanctions screening',380,'Hits armored Sanctions hits'],['Staggered onboarding',1100,'Drop-offs crawl, +1 damage']],B:[['Wider net',150,'+30 range'],['ID verification',350,'+30 range, merges Duplicates 3x'],['Global identity',1000,'Reveals hidden map-wide']]},
- sup:{n:'Support',c:240,r:100,rate:.9,dmg:1,shot:'chat',col:'#7fd3ff',acc:'headset',shirt:'#2d6b7a',st:1,d:'Responds in under a minute: pulses that clear Where’s my money? tickets around it.',gv:['tix','cell','drop'],
+ sup:{n:'Support',c:240,r:100,rate:.9,dmg:1,shot:'chat',col:'#7fd3ff',acc:'headset',shirt:'#2d6b7a',st:1,d:'Clears ticket swarms.',gv:['tix','cell','drop'],
   A:[['Live chat',160,'Pulses faster'],['24/7 coverage',380,'+1 damage'],['<1 min replies',1000,'Pulses twice as fast']],B:[['Help center',140,'+25 range'],['Status emails',300,'Slows problems in range'],['Self-serve dashboard',900,'+40 range, sees hidden']]},
- pay:{n:'Dots Payouts',c:420,r:140,rate:1,dmg:1,chain:3,shot:'zap',col:'#ffd84d',acc:'bolt',shirt:'#212121',st:2,prod:1,d:'Payout rails chain from problem to problem. Reroutes Failed payouts for good.',gv:['fail','row','dup'],
+ pay:{n:'Dots Payouts',c:420,r:140,rate:1,dmg:1,chain:3,shot:'zap',col:'#ffd84d',acc:'bolt',shirt:'#212121',st:2,prod:1,d:'Chains across problems. Stops retries.',gv:['fail','row','dup'],
   A:[['ACH',250,'Chains to 2 more'],['RTP / instant',600,'+60% speed'],['300+ rails',1600,'Chains across lanes, +3 targets']],B:[['FX',300,'+1 damage'],['150+ currencies',700,'+1 chain, +40% speed'],['Armored rails',1400,'Hits armored']]},
- sales:{n:'Sales',c:300,r:0,col:'#f5c542',acc:'phone',shirt:'#3d7a3a',st:2,d:'No attack. Drops coins, adds income every round and buys back runway.',gv:[],
+ sales:{n:'Sales',c:300,r:0,col:'#f5c542',acc:'phone',shirt:'#3d7a3a',st:2,d:'Earns cash and runway.',gv:[],
   A:[['Bigger deals',150,'Coins worth $12'],['Upsell',400,'Coins worth $18'],['Enterprise',1200,'Coins worth $30']],B:[['Pipeline',180,'Drops 25% faster'],['Referrals',450,'Drops 25% faster'],['Inbound engine',1100,'Drops 50% faster']]},
- tax:{n:'Dots Tax',c:360,r:115,rate:.9,dmg:2,pier:3,shot:'stamp',armor:1,col:'#e0884a',acc:'shield',shirt:'#8a4a2a',st:4,prod:1,d:'Stamps pierce armor and slow. Catches TIN mismatches before they become Penalties.',gv:['tin','sanc','pen'],
+ tax:{n:'Dots Tax',c:360,r:115,rate:.9,dmg:2,pier:3,shot:'stamp',armor:1,col:'#e0884a',acc:'shield',shirt:'#8a4a2a',st:4,prod:1,d:'Pierces armor. Stops penalties.',gv:['tin','sanc','pen'],
   A:[['W-9 / W-8BEN',220,'+1 damage'],['IRS TIN matching',500,'4x damage to TIN mismatches'],['1099 e-file',1500,'Hits everything in range']],B:[['T4A (Canada)',150,'+25 range'],['Expiration tracking',260,'Sees hidden'],['Audit-ready',1300,'3x damage to blimps']]},
- ops:{n:'Ops',c:260,r:110,col:'#7fd34e',acc:'clip',shirt:'#3b6b8a',st:4,d:'Automation. No attack; speeds up every hire in its circle.',gv:[],
+ ops:{n:'Ops',c:260,r:110,col:'#7fd34e',acc:'clip',shirt:'#3b6b8a',st:4,d:'Speeds up nearby hires.',gv:[],
   A:[['Playbooks',200,'Boost 15% to 25%'],['Runbooks',450,'Boost 25% to 35%'],['Autopilot',1200,'Boost 35% to 55%']],B:[['Tooling',180,'+12% circle size'],['Dashboards',400,'+12% circle size'],['Sharp edges',1000,'Nearby hires +1 pierce']]},
- bear:{n:'Golden Bear',c:520,r:125,rate:.7,dmg:3,shot:'paw',splash:46,armor:1,col:'#FDB515',acc:'cap',cap:'#003262',tas:'#FDB515',shirt:'#003262',alum:'UC Berkeley · B.S. EECS',st:0,d:'Lobs paws that splash a crowd. Hits armored.',gv:['sheet','sanc','tools']},
+ bear:{n:'Golden Bear',c:520,r:125,rate:.7,dmg:3,shot:'paw',splash:46,armor:1,col:'#FDB515',acc:'cap',cap:'#003262',tas:'#FDB515',shirt:'#003262',alum:'UC Berkeley · B.S. EECS',st:0,d:'Splash. Hits armor.',gv:['sheet','sanc','tools']},
  tart:{n:'Tartan',c:560,r:230,rate:2.2,dmg:2,pier:1,shot:'laser',camo:1,col:'#C41230',acc:'cap',cap:'#C41230',tas:'#e8e8e8',shirt:'#6b6b6b',alum:'Carnegie Mellon · M.S. CS',st:0,d:'Long-range laser. Sees hidden.',gv:['bad','drop','dup']}};
 const ORDER=['eng','hero','cto','onb','sup','pay','sales','tax','ops','bear','tart'];
 const FOUNDER=kk=>kk=='hero'||kk=='cto';
@@ -309,7 +310,7 @@ function stat(tw){const b=TT[tw.k],a=tw.u[0],c=tw.u[1];const s={tk:tw.k,r:b.r,ra
 
 /* ---- state ---- */
 let best=store.get(KB,0),unl=store.get(KU,{bear:0,tart:0})||{bear:0,tart:0},runs=store.get(KR,0),bestStage=store.get(KS,0),eBest=store.get(KE,0);
-let st,running=false,over=false,bmOpen=false,queue=[],enemies=[],towers=[],shots=[],fx=[],coins=[],sel=null,placing=null,info=null,ghost=null,dragArm=false,justDown=false,tipDone=false,V=null,k=1,bg=null,bgOld=null,fog=null,banT=0,toastT=0,etT=0;
+let st,running=false,over=false,bmOpen=false,queue=[],enemies=[],towers=[],shots=[],fx=[],coins=[],sel=null,placing=null,moving=null,info=null,ghost=null,dragArm=false,justDown=false,tipDone=false,V=null,k=1,bg=null,bgOld=null,fog=null,banT=0,toastT=0,etT=0;
 let cam=camFor(0),camA=cam,camB=cam,rev={t:1,s:0},seen=new Set(),fresh=new Set(),bmCards=[];
 const mk=(kk,px,py,spent)=>({k:kk,x:px,y:py,u:[0,0],cd:kk=='sales'?3:0,spent,face:1,lv:1,fire:0,s:null,mul:1,pAdd:0,det:false,off:false});
 const heroOn=()=>towers.some(t=>t.k=='hero');
@@ -325,7 +326,7 @@ const curR=()=>st.endless?st.eR:R[Math.min(st.round,NR-1)];
 function newGame(){const sp=st?st.speed:1;setMain(ROUTE_A,MS_A);
  st={cash:350,mo:12,round:0,speed:sp,ultCd:0,hotCd:0,hotT:0,pops:0,spawnT:0,hurt:0,flash:0,stage:0,yc:0,raise:null,tough:-1,ramen:-1,noInc:0,freeUp:0,closer:0,pivoted:0,endless:0,eRounds:0,eR:null,demo:null,cart:null,fxOn:0,fxT:0,holiday:-1,pv:null,actsDone:0};
  running=false;over=false;bmOpen=false;bmEl.hidden=true;queue=[];enemies=[];shots=[];fx=[];coins=[];seen=new Set();fresh=new Set();
- towers=[mk('hero',300,398,0),mk('cto',445,398,0)];towers[1].face=-1;sel=null;placing=null;info=null;ghost=null;endEl.hidden=true;panel.hidden=true;cam=camA=camB=camFor(0);rev={t:1,s:0};buildBG();buildFog(0,1);buildTray();holdNext()}
+ towers=[mk('hero',300,398,0),mk('cto',445,398,0)];towers[1].face=-1;sel=null;placing=null;moving=null;info=null;ghost=null;endEl.hidden=true;panel.hidden=true;cam=camA=camB=camFor(0);rev={t:1,s:0};buildBG();buildFog(0,1);buildTray();holdNext()}
 
 /* ---- drawing helpers ---- */
 function fig(x,X,Yy,s,L,an,o){
@@ -456,7 +457,7 @@ function buildFog(s,a){if(!fogTex)fogTex=fogTexture();if(!fog){fog=document.crea
 function hpMul(){return(st.tough===st.stage&&!st.endless?1.15:1)*(st.endless?Math.pow(1.17,st.eRounds):1)}
 function spawn(kk,d,ln,d0,extra){const p=at(ln,d),T=E[kk],m=hpMul();const e={k:kk,hp:T.hp*m,mh:T.hp*m,d,ln,d0:d0==null?d:d0,x:p[0],y:p[1],ang:p[2],slowT:0,slowF:0,flash:0,decamo:0,dead:0,seed:Math.random()*9,dt:0,ct:0,cl:0,gen:0};
  if(kk=='dd'){const ph=T.plates*m;e.pl={onb:ph,pay:ph,tax:ph};e.plMax=ph}
- if(kk=='copy'){const cnt={};for(const t of towers){if(FOUNDER(t.k))continue;cnt[t.k]=(cnt[t.k]||0)+1+t.spent/1e5}let bk='eng',bv=-1;for(const kq in cnt)if(cnt[kq]>bv){bv=cnt[kq];bk=kq}e.imm=bk;banner('THE COPYCAT','Copies your '+TT[bk].n+'. Immune to it.',1900,true)}
+ if(kk=='copy'){const cnt={};for(const t of towers){if(FOUNDER(t.k))continue;cnt[t.k]=(cnt[t.k]||0)+1+t.spent/1e5}let bk='eng',bv=-1;for(const kq in cnt)if(cnt[kq]>bv){bv=cnt[kq];bk=kq}e.imm=bk;banner('THE COPYCAT','Immune to '+TT[bk].n,1900,true)}
  if(extra)Object.assign(e,extra);enemies.push(e);
  if(!seen.has(kk)){seen.add(kk);enemyTip(kk)}return e}
 function clink(e){fx.push({k:'clink',x:e.x,y:e.y-14,t:0,life:.25})}
@@ -491,11 +492,11 @@ function demoTick(dt){const D=st.demo;if(!D||D.done)return;D.t-=dt;D.el+=dt;D.sp
  if(D.t>0&&D.sp<=0){D.sp=Math.max(.15,.5-D.el*.0055);const pool=D.el<20?['cell','row','tix','drop']:D.el<40?['row','sheet','tix','drop','fail']:['sheet','fail','dup','drop','tix','row'];const ln=Math.random()<.4?1:0;spawn(pick(pool),ln?0:MSTART[st.stage],ln,ln?0:MSTART[st.stage])}
  if(D.t<=0){D.done=1;D.t=0;for(const e of enemies){if(!e.dead){e.dead=1;fx.push({k:'pop',x:e.x,y:e.y-12,t:0,life:.4,col:'#f5f543',big:0})}}
   const cash=Math.min(2600,Math.round((400+D.score*2)/50)*50),mo=Math.min(6,Math.round((2+D.score/250)*10)/10);st.raise={cash,mo,score:D.score};
-  banner('DEMO DAY: '+D.score+' POINTS','Series A raise: $'+cash+' and +'+mo+' mo runway',2200)}}
+  banner('DEMO DAY: '+D.score+' POINTS','Raise: $'+cash+' · +'+mo+' mo',2200)}}
 function cartTick(dt){const C=st.cart;if(!C||C.state!='go')return;C.d+=34*dt;const p=atL(CART,C.d);C.x=p[0];C.y=p[1];C.hitT=Math.max(0,(C.hitT||0)-dt);
  for(const e of enemies){if(e.dead)continue;if(Math.hypot(e.x-C.x,e.y-C.y)<24+E[e.k].r*.6){C.hp-=(E[e.k].boss?30:8)*dt;C.hitT=.15}}
- if(C.hp<=0){C.hp=0;C.state='lost';st.mo-=2;st.hurt=.6;fx.push({k:'pop',x:C.x,y:C.y-14,t:0,life:.6,col:'#e5533c',big:1});banner('PAYOUT FAILED','The first customer walked. -2 mo runway',1800,true);if(st.mo<=0){st.mo=0;finish(false)}}
- else if(C.d>=CART.L){C.state='won';st.cash+=300;st.mo+=2;fx.push({k:'pop',x:C.x,y:C.y-14,t:0,life:.7,col:'#f5f543',big:1});banner('FIRST CUSTOMER CLOSED','+$300 and +2 mo runway',1800)}}
+ if(C.hp<=0){C.hp=0;C.state='lost';st.mo-=2;st.hurt=.6;fx.push({k:'pop',x:C.x,y:C.y-14,t:0,life:.6,col:'#e5533c',big:1});banner('PAYOUT FAILED','Customer lost · -2 mo',1800,true);if(st.mo<=0){st.mo=0;finish(false)}}
+ else if(C.d>=CART.L){C.state='won';st.cash+=300;st.mo+=2;fx.push({k:'pop',x:C.x,y:C.y-14,t:0,life:.7,col:'#f5f543',big:1});banner('FIRST CUSTOMER CLOSED','+$300 · +2 mo',1800)}}
 function sim(dt){if(!running||over)return;
  st.spawnT+=dt;while(queue.length&&queue[0].t<=st.spawnT){const q=queue.shift();const d=q.ln?0:MSTART[st.stage];spawn(q.k,d,q.ln,d)}
  if(st.fxOn)st.fxT+=dt;const fxm=st.fxOn?1+.35*Math.sin(st.fxT*TAU/9):1;
@@ -535,9 +536,9 @@ function startRound(){if(running||over||bmOpen||st.wait)return;const cr=curR();q
  st.fxOn=cr.chaos?1:0;st.holiday=-1;
  if(cr.chaos){const open=LN.map((L,i)=>L.st<=st.stage?i:-1).filter(i=>i>=0);st.holiday=pick(open)}
  const boss=cr.g.find(g=>E[g[0]].boss);
- if(cr.demo)banner('DEMO DAY','60 seconds. Pop as much as you can.',1500);
- else if(cr.escort)banner('ESCORT','Get the payout to the customer',1500);
- else if(st.holiday>=0)banner('BANK HOLIDAY',LN[st.holiday].n+' lane: Dots Payouts there are offline this round',1900,true);
+ if(cr.demo)banner('DEMO DAY','60 seconds. Go.',1500);
+ else if(cr.escort)banner('ESCORT','Deliver the payout',1500);
+ else if(st.holiday>=0)banner('BANK HOLIDAY',LN[st.holiday].n+' Payouts offline',1900,true);
  else banner(boss?'BOSS · '+E[boss[0]].n:st.endless?'ENDLESS · ROUND '+(st.eRounds+1):'ROUND '+(st.round+1),st.endless?'190+ countries and counting':ACTS[cr.a],1300,!!boss)}
 function roundEnd(){running=false;st.wait=1;st.fxOn=0;st.holiday=-1;st.demo=st.demo&&st.demo.done?null:st.demo;st.cart=null;
  let inc=st.noInc?0:120+15*(Math.min(st.round,NR)+1+(st.endless?st.eRounds:0)),sinc=0,back=0;
@@ -549,23 +550,23 @@ function roundEnd(){running=false;st.wait=1;st.fxOn=0;st.holiday=-1;st.demo=st.d
  if(st.endless){st.eRounds++;if(st.eRounds>eBest){eBest=st.eRounds;store.set(KE,eBest)}st.eR=endlessRound(st.eRounds+1);banner('ROUND CLEAR','+$'+inc+' · -'+burn+' mo burn',1200);setTimeout(()=>{if(!running&&!over)holdNext()},1250);return}
  const prevA=R[st.round].a;st.round++;const nextA=st.round<NR?R[st.round].a:7;
  if(nextA>prevA){actDone(prevA,inc);return}
- banner('ROUND CLEAR','+$'+inc+(deal?' (incl. Close the deal)':'')+' · -1 mo burn',1200);setTimeout(()=>{if(!running&&!over&&!bmOpen)holdNext()},1250)}
+ banner('ROUND CLEAR','+$'+inc+' · -1 mo burn',1200);setTimeout(()=>{if(!running&&!over&&!bmOpen)holdNext()},1250)}
 function actDone(a,inc){st.actsDone=a+1;bmCards=[];if(a+1>best){best=a+1;store.set(KB,best)}
- if(a==0){st.yc=1;st.cash+=300;st.mo+=3;banner('ACCEPTED (S21)','YC office hours: hires +30% speed, upgrades 20% off · +$300, +3 mo',2000)}
- else if(a==3){st.yc=0;banner('DEMO DAY DONE','Series A raise: $'+(st.raise?st.raise.cash:0),1700)}
+ if(a==0){st.yc=1;st.cash+=300;st.mo+=3;banner('ACCEPTED (S21)','Office hours on · +$300, +3 mo',2000)}
+ else if(a==3){st.yc=0;banner('DEMO DAY DONE','Raise: $'+(st.raise?st.raise.cash:0),1700)}
  else if(a==6){startEndless();return}
  else banner('ACT CLEAR',ACTS[a]+' · +$'+inc,1500);
- if(a==2&&!unl.bear){unl.bear=1;store.set(KU,unl);setTimeout(()=>toast('Alumni unlocked: Golden Bear · UC Berkeley B.S. EECS'),600);fresh.add('bear');buildTray()}
- if(a==4&&!unl.tart){unl.tart=1;store.set(KU,unl);setTimeout(()=>toast('Alumni unlocked: Tartan · Carnegie Mellon M.S. CS'),600);fresh.add('tart');buildTray()}
+ if(a==2&&!unl.bear){unl.bear=1;store.set(KU,unl);setTimeout(()=>toast('Unlocked: Golden Bear'),600);fresh.add('bear');buildTray()}
+ if(a==4&&!unl.tart){unl.tart=1;store.set(KU,unl);setTimeout(()=>toast('Unlocked: Tartan'),600);fresh.add('tart');buildTray()}
  setTimeout(()=>{if(!over)board(a)},a==0?2100:1700)}
 const CARDS=[
- {id:'raise',n:'Raise a round',d:'+$500 now. Problems are 15% tougher next act.',f:()=>{st.cash+=500;st.tough=st.stage+1}},
- {id:'senior',n:'Senior hire',d:'Your next upgrade is free, any tier.',f:()=>{st.freeUp=1}},
- {id:'pivot',n:'Pivot',d:'Rebuild: every hire refunded in full.',f:()=>{let r=0;towers=towers.filter(t=>{if(FOUNDER(t.k))return true;r+=t.spent;return false});st.cash+=r;setTimeout(()=>toast('Refunded $'+r),300)}},
- {id:'ramen',n:'Ramen mode',d:'Hires 25% cheaper next act. No income next round.',f:()=>{st.ramen=st.stage+1;st.noInc=1}},
- {id:'closer',n:'Hire a closer',d:'Sales earns 50% more for the rest of the run.',f:()=>{st.closer=1}},
- {id:'burn',n:'Cut burn',d:'+2 months of runway.',f:()=>{st.mo+=2}}];
-function board(a){bmOpen=true;closePanel();placing=null;ghost=null;ban.classList.remove('show');
+ {id:'raise',n:'Raise a round',d:'+$500. Next act 15% harder.',f:()=>{st.cash+=500;st.tough=st.stage+1}},
+ {id:'senior',n:'Senior hire',d:'Next upgrade free.',f:()=>{st.freeUp=1}},
+ {id:'pivot',n:'Pivot',d:'Refund every hire.',f:()=>{let r=0;towers=towers.filter(t=>{if(FOUNDER(t.k))return true;r+=t.spent;return false});st.cash+=r;setTimeout(()=>toast('Refunded $'+r),300)}},
+ {id:'ramen',n:'Ramen mode',d:'Hires 25% off. No income next round.',f:()=>{st.ramen=st.stage+1;st.noInc=1}},
+ {id:'closer',n:'Hire a closer',d:'Sales +50%.',f:()=>{st.closer=1}},
+ {id:'burn',n:'Cut burn',d:'+2 months.',f:()=>{st.mo+=2}}];
+function board(a){bmOpen=true;closePanel();placing=null;moving=null;ghost=null;ban.classList.remove('show');
  const pool=CARDS.filter(c=>!(c.id=='pivot'&&(a==1||towers.every(t=>FOUNDER(t.k))))&&!(c.id=='closer'&&st.closer));bmCards=[];while(bmCards.length<3&&pool.length)bmCards.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
  bmEl.innerHTML=`<div class="c69-bmb"><small>BOARD MEETING · AFTER ${ACTS[a].toUpperCase()}</small><h3>Pick one</h3><div class="c69-bmc">${bmCards.map((c,i)=>`<button type="button" data-i="${i}"><i>${i+1}</i><b>${c.n}</b><span>${c.d}</span></button>`).join('')}</div></div>`;bmEl.hidden=false;cardsUpd()}
 function pickCard(i){if(!bmOpen||!bmCards[i])return;const c=bmCards[i];c.f();bmOpen=false;bmEl.hidden=true;toast(c.n);cardsUpd();holdNext()}
@@ -575,29 +576,30 @@ function holdNext(){if(over||bmOpen)return;
  if(cr.pivot&&!st.pivoted){doPivot();return}
  if(r==0){stageCard(0);return}
  const boss=cr.g.find(g=>E[g[0]].boss);st.wait=0;
- banner(cr.demo?'DEMO DAY':cr.escort?'ESCORT':boss?'BOSS · '+E[boss[0]].n:'ROUND '+(r+1),cr.demo?'60 seconds on stage':cr.escort?'Get the first payout to the customer':cr.a==6?'FX swings and bank holidays':ACTS[a],0,!!boss,'PRESS START')}
-function stageCard(s){st.wait=0;const c=SC[s];let l=c.l;if(s==5){const rz=st.raise||{cash:0,mo:0};l=['Raised $'+rz.cash+' from Demo Day (+'+rz.mo+' mo runway)',...c.l]}
- banner(ACTS[s],'Act '+(s+1)+' of 7 · Round '+(st.round+1)+' of '+NR,0,false,'PRESS START',l,true)}
+ banner(cr.demo?'DEMO DAY':cr.escort?'ESCORT':boss?'BOSS · '+E[boss[0]].n:'ROUND '+(r+1),cr.demo?'60 seconds':cr.escort?'Deliver the payout':cr.a==6?'FX swings · holidays':ACTS[a],0,!!boss,'PRESS START')}
+function stageCard(s){st.wait=0;const c=SC[s];let l=c.l;if(s==5){const rz=st.raise||{cash:0,mo:0};l=['Raised $'+rz.cash+' · +'+rz.mo+' mo',...c.l]}
+ banner(ACTS[s],'Act '+(s+1)+' of 7',0,false,'PRESS START',l,true)}
 function validAt(px,py,s,self){return px>25&&px<W-25&&py>25&&py<H-25&&revealed(px,py)&&dTrack(px,py,s)>40&&Math.abs(px-rivX(py))>34&&Math.hypot(px-ANC[0],py-ANC[1])>62&&Math.hypot(px-CUST[0],py-CUST[1])>(s>=2?50:0)&&towers.every(t=>t===self||Math.hypot(t.x-px,t.y-py)>40)}
 function findSpot(t,s){for(let rad=20;rad<=240;rad+=12)for(let a=0;a<TAU;a+=TAU/Math.max(8,Math.round(rad/6))){const px=t.x+Math.cos(a)*rad,py=t.y+Math.sin(a)*rad;if(validAt(px,py,s,t))return[px,py]}return null}
-function clearRoad(s){let ref=0,moved=[];towers=towers.filter(t=>{if(dTrack(t.x,t.y,s)>=38)return true;if(FOUNDER(t.k)){const p=findSpot(t,s);if(p){t.x=p[0];t.y=p[1];moved.push(TT[t.k].n);fx.push({k:'ring',x:t.x,y:t.y-10,r:30,t:0,life:.5,col:TT[t.k].col});return true}}
+function clearRoad(s){let ref=0,moved=[];towers=towers.filter(t=>{if(dTrack(t.x,t.y,s)>=38)return true;{const p=findSpot(t,s);if(p){t.x=p[0];t.y=p[1];moved.push(TT[t.k].n);fx.push({k:'ring',x:t.x,y:t.y-10,r:30,t:0,life:.5,col:TT[t.k].col});return true}}
   ref+=t.spent;fx.push({k:'pop',x:t.x,y:t.y-14,t:0,life:.4,col:'#f5f543',big:0});if(sel===t)closePanel();return false});
- if(ref)setTimeout(()=>toast('A hire stood on the new road: refunded $'+ref),2000);else if(moved.length)setTimeout(()=>toast(moved.join(' and ')+' stepped off the new road'),2000)}
+ st.cash+=ref;
+ if(moved.length)setTimeout(()=>toast(moved.length>2?moved.length+' hires moved off the road':moved.join(' and ')+' moved off the road'),2000);if(ref)setTimeout(()=>toast('No room: refunded $'+ref),3200)}
 function growTo(s){camA={...cam};camB=camFor(s);st.stage=s;if(s>bestStage){bestStage=s;store.set(KS,s)}rev={t:0,s};
  const c=SC[s];if(c.cash)st.cash+=c.cash;if(s==5&&st.raise){st.cash+=st.raise.cash;st.mo+=st.raise.mo}(c.h||[]).forEach(h=>fresh.add(h));
  clearRoad(s);buildBG();buildTray();stageCard(s)}
 function doPivot(){st.wait=1;bgOld=bg;setMain(ROUTE_B,MS_B);st.pivoted=1;clearRoad(st.stage);buildBG();st.pv={t:0};
- banner('PIVOT!','The road changes. Your hires stay.',2300);setTimeout(()=>{if(!over&&!running)holdNext()},2400)}
+ banner('PIVOT!','New road',2300);setTimeout(()=>{if(!over&&!running)holdNext()},2400)}
 function startEndless(){st.endless=1;st.eRounds=0;st.eR=endlessRound(1);if(best<7){best=7;store.set(KB,best)}
- banner('THE STATUS QUO FALLS','190+ countries and counting · Endless scaling begins',2400);setTimeout(()=>{if(!over)holdNext()},2500)}
+ banner('THE STATUS QUO FALLS','Endless mode',2400);setTimeout(()=>{if(!over)holdNext()},2500)}
 function finish(win){if(over)return;over=true;running=false;bmOpen=false;bmEl.hidden=true;runs++;store.set(KR,runs);ban.classList.remove('show');
  const si=st.endless?6:Math.min(st.stage,6);const trail=ACTS.map((n,i)=>`<i class="${i<si||st.endless||i==si?'on':''}">${n}</i>`).join('');
  const head=st.endless?'190+ countries and counting':ACTS[si],sub=st.endless?'OUT OF RUNWAY · ENDLESS':'OUT OF RUNWAY',line=st.endless?`Endless: ${st.eRounds} rounds survived &middot; Best ${eBest}`:`Reached act ${si+1} of 7 &middot; ${st.pops} problems solved`;
  endEl.innerHTML=`<div class="c69-box"><small>${sub}</small><h3>${head}</h3><div class="c69-trail">${trail}</div><p>${line}</p><p class="c69-un">Alumni: ${unl.bear?'Golden Bear':'locked'} &middot; ${unl.tart?'Tartan':'locked'}</p><p>Dots was founded by Sahil Hasan (CEO) and Kartikye Mittal (CTO)</p><div class="c69-row"><button type="button" class="c69-again">Run again</button><a class="c69-li" href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LinkedIn</a><button type="button" class="c69-wd">Worlds</button></div></div>`;
- endEl.hidden=false;closePanel();placing=null;ghost=null;cardsUpd()}
-function hotfix(){if(!ctoOn()||st.hotCd>0||over)return;if(!running){toast('Hotfix works during a round');return}st.hotCd=HOT_CD;st.hotT=HOT_T;
+ endEl.hidden=false;closePanel();placing=null;moving=null;ghost=null;cardsUpd()}
+function hotfix(){if(!ctoOn()||st.hotCd>0||over)return;if(!running){toast('Hotfix: during rounds');return}st.hotCd=HOT_CD;st.hotT=HOT_T;
  for(const t of towers)if(t.k!='sales'&&t.k!='ops')fx.push({k:'ring',x:t.x,y:t.y-10,r:30,t:0,life:.45,col:CTO});
- const c=towers.find(t=>t.k=='cto');if(c)fx.push({k:'txt2',x:c.x,y:c.y-60,s:'HOTFIX',t:0,life:1.2});banner('HOTFIX','Every hire attacks 2x faster for 6s',1100);if(sel)renderPanel()}
+ const c=towers.find(t=>t.k=='cto');if(c)fx.push({k:'txt2',x:c.x,y:c.y-60,s:'HOTFIX',t:0,life:1.2});banner('HOTFIX','2x speed · 6s',1100);if(sel)renderPanel()}
 function ult(){if(!heroOn()||st.ultCd>0||over)return;const live=enemies.filter(e=>!e.dead);if(!live.length){toast('No problems on the road');return}st.ultCd=ULT_CD;st.flash=.5;
  live.forEach((e,i)=>fx.push({k:'rain',x:e.x,y:e.y-10,g:CUR[i%4],t:-Math.random()*.25,life:.45}));
  for(let i=0;i<22;i++)fx.push({k:'rain',x:cam.x+Math.random()*W/cam.z,y:cam.y+(.15+Math.random()*.55)*H/cam.z,g:CUR[i%4],t:-Math.random()*.4,life:.5});
@@ -633,15 +635,17 @@ function renderPanel(){if(!sel)return;const b=TT[sel.k],s=stat(sel);let h=`<div 
   if(n>=3)h+=`<span class="c69-max">MAX</span>`;else if(n==2&&o==3)h+=`<span class="c69-max">CLOSED<small>Only one path can reach tier 3</small></span>`;else{const[nm,c0,fx_]=arr[n],c=upCost(c0);h+=`<button type="button" class="c69-up${st.cash<c?' poor':''}" data-p="${p}"><span><b>${nm}</b><small>${fx_}</small></span><em>${c?'$'+c:'FREE'}</em></button>`}h+='</div>'})}
  else if(sel.k=='cto')h+=`<button type="button" class="c69-up c69-hu"><span><b>Hotfix</b><small>Every hire attacks 2x faster for 6s</small></span><em>${st.hotCd>0?Math.ceil(st.hotCd)+'s':'READY'}</em></button>`;
  else if(sel.k=='hero')h+=`<button type="button" class="c69-up c69-pu"><span><b>Global Payout</b><small>Rains $ &euro; &yen; &pound; on every problem</small></span><em>${st.ultCd>0?Math.ceil(st.ultCd)+'s':'READY'}</em></button>`;
- if(!FOUNDER(sel.k))h+=`<div class="c69-pf"><button type="button" class="c69-sell">Sell $${Math.floor(sel.spent*.7)}</button></div>`;panel.innerHTML=h}
+ h+=`<div class="c69-pf"><button type="button" class="c69-mv">Move</button>${FOUNDER(sel.k)?'':`<button type="button" class="c69-sell">Sell $${Math.floor(sel.spent*.7)}</button>`}</div>`;panel.innerHTML=h}
+function tryMove(px,py){const t=moving;if(!t)return;if(!inView(px,py)||!validAt(px,py,st.stage,t)){toast(revealed(px,py)?"Can't move there":'Not unlocked yet');return}
+ t.x=px;t.y=py;fx.push({k:'ring',x:px,y:py-10,r:30,t:0,life:.35,col:TT[t.k].col});moving=null;ghost=null;cardsUpd()}
 function upgrade(tw,p){const b=TT[tw.k];if(!b.A)return;const n=tw.u[p]+1,o=tw.u[1-p];if(n>3||(n==3&&o==3))return;const c=upCost((p?b.B:b.A)[n-1][1]);if(st.cash<c){toast('Need $'+c);return}
- st.cash-=c;tw.spent+=c;tw.u[p]=n;if(st.freeUp){st.freeUp=0;toast('Senior hire: upgrade on the house')}fx.push({k:'ring',x:tw.x,y:tw.y-14,r:34,t:0,life:.4,col:p?'#4dd2ff':DY});renderPanel()}
+ st.cash-=c;tw.spent+=c;tw.u[p]=n;if(st.freeUp){st.freeUp=0;toast('Free upgrade')}fx.push({k:'ring',x:tw.x,y:tw.y-14,r:34,t:0,life:.4,col:p?'#4dd2ff':DY});renderPanel()}
 function sell(tw){if(FOUNDER(tw.k))return;st.cash+=Math.floor(tw.spent*.7);towers=towers.filter(t=>t!==tw);fx.push({k:'pop',x:tw.x,y:tw.y-14,t:0,life:.3,col:'#f5f543',big:0});closePanel()}
 function inView(px,py){const sx=(px-cam.x)*cam.z/W,sy=(py-cam.y)*cam.z/H;return sx>.02&&sx<.98&&sy>.1&&sy<.78}
 function revealed(px,py){for(let i=0;i<=st.stage;i++){const R_=REV[i];if(px>R_[0]+12&&px<R_[2]-12&&py>R_[1]+12&&py<R_[3]-12)return true}return false}
 function valid(kk,px,py){return inView(px,py)&&validAt(px,py,st.stage,null)}
 function tryPlace(kk,px,py){if(over||bmOpen)return;const c=costOf(kk);if(onMap(kk)){toast(whoOn(kk));placing=null;cardsUpd();return}
- if(st.cash<c){toast('Need $'+c);return}if(!valid(kk,px,py)){toast(revealed(px,py)?"Can't hire there":'The company hasn’t grown there yet');return}
+ if(st.cash<c){toast('Need $'+c);return}if(!valid(kk,px,py)){toast(revealed(px,py)?"Can't hire there":'Not unlocked yet');return}
  st.cash-=c;const t=mk(kk,px,py,c);towers.push(t);fx.push({k:'ring',x:px,y:py-10,r:30,t:0,life:.35,col:TT[kk].col});placing=null;ghost=null;info=null;panel.hidden=true;hideTip();cardsUpd()}
 function worlds(){location.href='../'}
 function togglePlacing(kk){if(over||bmOpen)return;if(locked(kk)){showInfo(kk);toast(lockMsg(kk));return}if(onMap(kk)){toast(whoOn(kk));return}
@@ -713,14 +717,15 @@ function render(t){const{w,h,x}=V;x.clearRect(0,0,w,h);x.save();x.scale(k*cam.z,
  const tx=cam.x+.905*W/cam.z,ty=cam.y+.05*H/cam.z;
  for(const c of coins){const u=Math.min(1,c.t/.9);let px,py;if(u<.35){px=c.sx;py=c.sy-30*(u/.35)}else{const v=(u-.35)/.65;px=lerp(c.sx,tx,v);py=lerp(c.sy-30,ty,v)}x.fillStyle='#f5c542';circ(x,px,py,8);x.strokeStyle='#a87a12';x.lineWidth=1.5;x.beginPath();x.arc(px,py,8,0,TAU);x.stroke();x.fillStyle='#7a5410';x.font="700 11px 'Barlow Condensed',sans-serif";x.textAlign='center';x.textBaseline='middle';x.fillText('$',px,py+.5)}
  if(placing&&ghost){const b=TT[placing],ok=valid(placing,ghost[0],ghost[1])&&st.cash>=costOf(placing);const R_=placing=='sales'?40:b.r;x.fillStyle=ok?'rgba(255,255,255,.1)':'rgba(255,60,60,.16)';x.strokeStyle=ok?'rgba(255,255,255,.55)':'rgba(255,90,90,.8)';x.lineWidth=2;x.beginPath();x.arc(ghost[0],ghost[1]-6,R_,0,TAU);x.fill();x.stroke();x.globalAlpha=.7;fig(x,ghost[0],ghost[1],1.65,b,an,{face:1});x.globalAlpha=1}
+ if(moving&&ghost){const b=TT[moving.k],ok=inView(ghost[0],ghost[1])&&validAt(ghost[0],ghost[1],st.stage,moving);const R_=moving.k=='sales'?40:(b.r||40);x.fillStyle=ok?'rgba(255,255,255,.1)':'rgba(255,60,60,.16)';x.strokeStyle=ok?'rgba(255,255,255,.55)':'rgba(255,90,90,.8)';x.lineWidth=2;x.beginPath();x.arc(ghost[0],ghost[1]-6,R_,0,TAU);x.fill();x.stroke();x.globalAlpha=.7;fig(x,ghost[0],ghost[1],1.65,b,an,{face:1});x.globalAlpha=1}
  x.restore();
  if(st.flash>0){x.fillStyle=`rgba(245,245,67,${st.flash*.35})`;x.fillRect(0,0,w,h)}}
 
 /* ---- input ---- */
 function wpos(ev){const r=cv.getBoundingClientRect();return[cam.x+(ev.clientX-r.left)/r.width*W/cam.z,cam.y+(ev.clientY-r.top)/r.height*H/cam.z]}
-cv.addEventListener('pointermove',ev=>{if(placing)ghost=wpos(ev)});
+cv.addEventListener('pointermove',ev=>{if(placing||moving)ghost=wpos(ev)});
 cv.addEventListener('pointerleave',()=>{if(!dragArm)ghost=null});
-cv.addEventListener('click',ev=>{if(over||bmOpen)return;const[px,py]=wpos(ev);if(placing){ghost=[px,py];tryPlace(placing,px,py);return}
+cv.addEventListener('click',ev=>{if(over||bmOpen)return;const[px,py]=wpos(ev);if(moving){ghost=[px,py];tryMove(px,py);return}if(placing){ghost=[px,py];tryPlace(placing,px,py);return}
  let ht=null,bd=30;for(const t of towers){const d=Math.hypot(t.x-px,t.y-20-py);if(d<bd){bd=d;ht=t}}if(ht)openPanel(ht);else closePanel()});
 let lpT=0,lpDone=false;
 cardsEl.addEventListener('pointerdown',ev=>{const c=ev.target.closest('.c69-card');if(!c)return;const kk=c.dataset.k;lpDone=false;
@@ -732,7 +737,7 @@ cardsEl.addEventListener('pointerover',ev=>{const c=ev.target.closest('.c69-card
 cardsEl.addEventListener('pointerout',ev=>{const c=ev.target.closest('.c69-card');if(!c||ev.pointerType!=='mouse'||placing)return;if(!ev.relatedTarget||!c.contains(ev.relatedTarget))hideInfo()});
 el.addEventListener('pointerup',ev=>{if(dragArm){dragArm=false;if(ev.target===cv&&placing){const[px,py]=wpos(ev);tryPlace(placing,px,py);justDown=false}}if(!(ev.target.closest&&ev.target.closest('.c69-card')))justDown=false});
 cardsEl.addEventListener('click',ev=>{const c=ev.target.closest('.c69-card');if(!c)return;if(lpDone){lpDone=false;return}if(justDown){justDown=false;return}togglePlacing(c.dataset.k)});
-panel.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.classList.contains('c69-x')){closePanel();placing=null;cardsUpd();return}if(!sel)return;if(b.classList.contains('c69-pu'))ult();else if(b.classList.contains('c69-hu'))hotfix();else if(b.classList.contains('c69-up'))upgrade(sel,+b.dataset.p);else if(b.classList.contains('c69-sell'))sell(sel)});
+panel.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.classList.contains('c69-x')){closePanel();placing=null;cardsUpd();return}if(!sel)return;if(b.classList.contains('c69-pu'))ult();else if(b.classList.contains('c69-hu'))hotfix();else if(b.classList.contains('c69-up'))upgrade(sel,+b.dataset.p);else if(b.classList.contains('c69-sell'))sell(sel);else if(b.classList.contains('c69-mv')){moving=sel;placing=null;ghost=null;closePanel();toast('Tap a new spot')}});
 bmEl.addEventListener('click',ev=>{const b=ev.target.closest('button[data-i]');if(b)pickCard(+b.dataset.i)});
 goB.addEventListener('click',startRound);
 ffB.addEventListener('click',()=>{st.speed=st.speed==1?3:1;ffB.textContent=st.speed+'x';ffB.classList.toggle('on',st.speed>1)});
@@ -741,7 +746,7 @@ endEl.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)re
 document.addEventListener('keydown',ev=>{const tg=ev.target;if(ev.metaKey||ev.ctrlKey||ev.altKey)return;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'||tg.isContentEditable))return;const onCtl=tg!==el&&tg!==document.body&&(tg.tagName=='BUTTON'||tg.tagName=='A');const key=ev.key;
  if(bmOpen){if(/^[1-3]$/.test(key)){pickCard(+key-1);ev.preventDefault()}return}
  if(/^[0-9]$/.test(key)){const kk=ORDER[key=='0'?9:+key-1];if(kk)togglePlacing(kk);ev.preventDefault();return}
- if(key=='Escape'){placing=null;ghost=null;closePanel();cardsUpd();ev.preventDefault();return}
+ if(key=='Escape'){placing=null;moving=null;ghost=null;closePanel();cardsUpd();ev.preventDefault();return}
  if(onCtl)return;
  if(key==' '||key=='Enter'){if(over)newGame();else if(!running)startRound();else ffB.click();ev.preventDefault()}
  else if(key=='f'||key=='F'){ffB.click();ev.preventDefault()}
