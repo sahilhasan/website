@@ -562,12 +562,12 @@ function actDone(a,inc){st.actsDone=a+1;bmCards=[];if(a+1>best){best=a+1;store.s
 const CARDS=[
  {id:'raise',n:'Raise a round',d:'+$500. Next act 15% harder.',f:()=>{st.cash+=500;st.tough=st.stage+1}},
  {id:'senior',n:'Senior hire',d:'Next upgrade free.',f:()=>{st.freeUp=1}},
- {id:'pivot',n:'Pivot',d:'Refund every hire.',f:()=>{let r=0;towers=towers.filter(t=>{if(FOUNDER(t.k))return true;r+=t.spent;return false});st.cash+=r;setTimeout(()=>toast('Refunded $'+r),300)}},
+ {id:'cust',n:'Big customer',d:'+$350.',f:()=>{st.cash+=350}},
  {id:'ramen',n:'Ramen mode',d:'Hires 25% off. No income next round.',f:()=>{st.ramen=st.stage+1;st.noInc=1}},
  {id:'closer',n:'Hire a closer',d:'Sales +50%.',f:()=>{st.closer=1}},
  {id:'burn',n:'Cut burn',d:'+2 months.',f:()=>{st.mo+=2}}];
 function board(a){bmOpen=true;closePanel();placing=null;moving=null;ghost=null;ban.classList.remove('show');
- const pool=CARDS.filter(c=>!(c.id=='pivot'&&(a==1||towers.every(t=>FOUNDER(t.k))))&&!(c.id=='closer'&&st.closer));bmCards=[];while(bmCards.length<3&&pool.length)bmCards.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+ const pool=CARDS.filter(c=>!(c.id=='closer'&&st.closer));bmCards=[];while(bmCards.length<3&&pool.length)bmCards.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
  bmEl.innerHTML=`<div class="c69-bmb"><small>BOARD MEETING · AFTER ${ACTS[a].toUpperCase()}</small><h3>Pick one</h3><div class="c69-bmc">${bmCards.map((c,i)=>`<button type="button" data-i="${i}"><i>${i+1}</i><b>${c.n}</b><span>${c.d}</span></button>`).join('')}</div></div>`;bmEl.hidden=false;cardsUpd()}
 function pickCard(i){if(!bmOpen||!bmCards[i])return;const c=bmCards[i];c.f();bmOpen=false;bmEl.hidden=true;toast(c.n);cardsUpd();holdNext()}
 function holdNext(){if(over||bmOpen)return;
