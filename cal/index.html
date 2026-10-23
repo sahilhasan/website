@@ -191,6 +191,7 @@
   function stunt(kind){let g=null,fn=null,pal={bg:'#003262',c1:'#FDB515',c2:'#ffffff'},dur=3.4;
     if(kind==='BEAR')g=hcat(BEAR,txtGrid('CAL'),3);
     else if(kind==='DOTS'){g=DOTSG;pal={bg:'#212121',c1:Y,c2:Y}}
+    else if(kind==='BAND'){const tg=txtGrid('THE BAND IS ON THE FIELD'),tw=tg[0].length;dur=6.6;fn=(r,k,T)=>{const gj=k-Math.floor(SN-(T-.3)*42),gi=r-2;return gi>=0&&gi<7&&gj>=0&&gj<tw&&tg[gi][gj]?'#FDB515':'#003262'}}
     else if(kind==='OSKI.TV'){g=OSKITV;pal={bg:'#0c1626',c1:'#ffffff',c2:'#FDB515'}}
     else if(kind==='WAVE'){dur=4.4;fn=(r,k,T)=>{const wp=(T-.25)/(dur-.9)*(SN+20)-10,dd=k-wp+Math.abs(r-5)*.6;return Math.abs(dd)<2.6?(Math.abs(dd)<1.2?'#ffffff':'#FDB515'):'#003262'}}
     else if(kind==='CHECK'){dur=4;fn=(r,k,T)=>{const d=Math.hypot((k-SN/2)/2,r-5),v=((k>>1)+(r>>1)+Math.floor(d*.55-T*4))&1;return v?'#FDB515':'#003262'}}
@@ -719,7 +720,7 @@
     if(!tb.flat){moveTo(c2,tb.x,tb.y,c2.sp*.9,dt);if(Math.hypot(c2.x-tb.x,c2.y-tb.y)<5||p.t>1.4){tb.flat=1;tb.x+=3;
         p.horn={x:tb.x,y:tb.y-4,vx:34,vy:-70,a:0,va:9,gy:tb.y+2,rest:0};p.txt.push({s:'BWAMP!',x:tb.x+6,y:tb.y-14,t:0});shake=.45;p.hitT=p.t}}
     else{moveTo(c2,c2.x+6,c2.y,10,dt);if(p.t-p.hitT>1&&!p.won){p.won=1;p82Win()}}}
-  function p82Win(){const p=P,five=p.lat>=5;p8Go('done');celebrate(['#FDB515','#003262','#fff']);party=4;stunt('GO BEARS');
+  function p82Win(){const p=P,five=p.lat>=5;p8Go('done');celebrate(['#FDB515','#003262','#fff']);party=4;stunt('BAND');
     if(five&&!p82Done){p82Done=true;store.set('shasan.cal.play1982',true);p82Tag()}
     flash(five?'THE PLAY':'TOUCHDOWN!',five?`${p8Pl(p.lat,'LATERAL')} &middot; 1982 LIVES`:`${p8Pl(p.lat,'LATERAL')} &middot; THE REAL ONE HAD 5`,0,0,1);
     setTimeout(()=>{if(mode==='p82'&&P===p)p82End(true)},2600)}
