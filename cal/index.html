@@ -334,7 +334,7 @@
     G.q++;G.clock=90;G.fog=0;G.snapsQ=0;hud();
     if(G.q===3){if(G.poss==='cal')endDrive('HALF');return halftime()}
     S.ph='x';dead('END OF Q'+(G.q-1),`CAL ${G.cal} &middot; FURD ${G.fur}`,2,next)}
-  function halftime(){S.ph='half';S.t=0;S.st2=0;rplB.hidden=true;tickEl.hidden=true;flash('HALFTIME',`CAL ${G.cal} &middot; FURD ${G.fur}`,2,0,1);stunt('BEAR');
+  function halftime(){S.ph='half';S.t=0;S.st2=0;rplB.hidden=true;tickEl.hidden=true;ddEl.innerHTML='HALFTIME';ddEl.classList.remove('hot');flash('HALFTIME',`CAL ${G.cal} &middot; FURD ${G.fur}`,2,0,1);stunt('BEAR');
     const g=txtGrid('CAL'),cols=g[0].length;S.band=[];g.forEach((row,r)=>row.forEach((v,k)=>{if(v){const tx=MIDX+(k-(cols-1)/2)*7;S.band.push({tx,ty:MID-16+r*8.5,x:tx+(R()-.5)*40,y:FB+12,dl:.3+R()*1.2,vx:0,vy:0})}}))}
   function halfUpd(dt){S.band.forEach(m=>{m.vx=0;m.vy=0;if(S.t>m.dl)moveTo(m,m.tx,m.ty,30,dt)});
     if(S.t>4.6&&!S.st2&&S.t<20){S.st2=1;stunt('GO BEARS')}
