@@ -30,7 +30,8 @@
 .s68 .c68mini canvas{width:100%;height:100%;display:block}
 .s68 .c68bar{position:absolute;left:1.4cqw;bottom:1.4cqw;display:flex;gap:.6cqw}
 .s68 .c68bar button{font:700 1.45cqw 'Saira Condensed',sans-serif;letter-spacing:.06em;color:#ffb81c;background:rgba(17,17,17,.9);border:.2cqw solid #ffb81c;padding:.35cqw 1.1cqw;cursor:pointer}
-.s68 .c68bar .c68back{background:#ffb81c;color:#111}
+.s68 .pz-btn{color:#ffb81c;background:rgba(17,17,17,.9);border:.2cqw solid #ffb81c;padding:.35cqw 1cqw}
+.s68 .pz{--pz-bg:#111;--pz-fg:#f4efe2;--pz-ac:#ffb81c;--pz-font:'Saira Condensed',sans-serif;--pz-hs:3cqw;--pz-bs:2cqw}
 .s68 .c68tip{position:absolute;left:50%;bottom:1.6cqw;transform:translateX(-50%);font:700 1.6cqw 'Saira Condensed',sans-serif;letter-spacing:.08em;color:#111;background:#ffb81c;padding:.35cqw 1.4cqw;border-radius:2cqw;pointer-events:none;transition:opacity .5s;white-space:nowrap}
 .s68 .c68tip.off{opacity:0}
 .s68 .c68flash{position:absolute;left:50%;top:9cqw;transform:translateX(-50%);font:700 1.7cqw 'Saira Condensed',sans-serif;letter-spacing:.05em;background:rgba(17,17,17,.94);border-bottom:.3cqw solid #ffb81c;color:#fff;padding:.4cqw 1.6cqw;white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none}
@@ -107,11 +108,11 @@
     <div class="c68head"><b>SAHIL HASAN</b><span>Founder and CEO @ Dots</span><div class="c68sc"><i class="pt">0</i><i class="lb">PTS</i><i class="ar">0 AREAS</i></div><em>CARNEGIE MELLON &middot; M.S. CS</em></div>
     <div class="c68chips" role="group" aria-label="Landmarks"><span class="c68list" style="display:contents"></span><button type="button" class="c68cnt" aria-label="Landmarks found">1/7</button><button type="button" class="c68secn" aria-label="Secrets found">? 0/9</button></div>
     <div class="c68mini" title="Look around"><canvas width="200" height="112"></canvas></div>
-    <div class="c68bar"><button type="button" class="c68reset">New map</button><button type="button" class="c68back">Worlds</button></div>
+    <div class="c68bar"></div>
     <div class="c68tip">TAP THE MAP TO EXPLORE</div>
     <div class="c68flash" aria-live="polite"></div>
     <div class="c68mo" role="dialog" aria-live="polite"><div class="hd"><canvas class="ic" width="48" height="48"></canvas><div><h3 class="t"></h3><p class="l"></p></div></div><canvas class="mc" width="320" height="170"></canvas><div class="ft"><span class="vb"></span><span class="pips"></span><button type="button" class="sk">Skip</button></div></div>
-    <div class="c68fin" role="dialog"><canvas class="fa" width="320" height="130"></canvas><h3>Pittsburgh, charted</h3><p>Sahil Hasan &middot; M.S. Computer Science, Carnegie Mellon &middot; Founder and CEO @ Dots</p><div class="st"></div><div class="lk"><a href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LinkedIn</a></div><div class="bt"><button type="button" class="c68back">Worlds</button><button type="button" class="c68keep">Keep exploring</button><button type="button" class="c68reset">New map</button></div></div>
+    <div class="c68fin" role="dialog"><canvas class="fa" width="320" height="130"></canvas><h3>Pittsburgh, charted</h3><p>Sahil Hasan &middot; M.S. Computer Science, Carnegie Mellon &middot; Founder and CEO @ Dots</p><div class="st"></div><div class="bt"><button type="button" class="c68reset">Play again</button><button type="button" class="c68back">Worlds</button></div></div>
   </div>
 </main>
 <p class="rotate-hint">Turn your phone sideways for a bigger view</p>
@@ -545,7 +546,7 @@
   mc.addEventListener('pointermove',e=>{if(!mo||mo.done||!mo.def.move)return;const[px,py]=mpt(e);mo.def.move(mo,px,py);moPips();if(mo.n>=mo.def.goal)complete()});
   const mup=()=>{if(mo&&mo.def.up)mo.def.up(mo)};mc.addEventListener('pointerup',mup);mc.addEventListener('pointercancel',mup);
   $('.c68mo .sk').addEventListener('click',()=>{if(!mo)return;if(mo.done){nextMo();return}if(mo.k=='incline')mo.f=1;if(mo.k=='fence'){mo.pf=mo.pf.map(()=>1)}mo.n=mo.def.goal;complete();mo.dt=.6});
-  document.addEventListener('keydown',e=>{if(!mo||mo.done)return;if(e.key==' '||e.key=='Enter'){e.preventDefault();if(mo.def.key)mo.def.key(mo,true);else if(mo.def.tap&&mo.def.tap(mo,160+(Math.random()-.5)*40,100,performance.now()/1000))mo.n++;moPips();if(mo.n>=mo.def.goal&&mo.k!='incline')complete()}});
+  document.addEventListener('keydown',e=>{if(pz.open||!mo||mo.done)return;if(e.key==' '||e.key=='Enter'){e.preventDefault();if(mo.def.key)mo.def.key(mo,true);else if(mo.def.tap&&mo.def.tap(mo,160+(Math.random()-.5)*40,100,performance.now()/1000))mo.n++;moPips();if(mo.n>=mo.def.goal&&mo.k!='incline')complete()}});
   el.addEventListener('keyup',e=>{if(mo&&mo.k=='incline'&&(e.key==' '||e.key=='Enter'))mo.def.key(mo,false)});
   /* ---------- finale ---------- */
   const fin=$('.c68fin'),fa=$('.c68fin canvas.fa'),fax=fa.getContext('2d');let tour=null,fw=[];
@@ -612,7 +613,7 @@
   function reset(){S=fresh();booting=true;reveal(S.pos,4);discover();booting=false;route=[];moQ=[];mo=null;moEl.classList.remove('show');fin.classList.remove('show');tour=null;incQ=false;
     cam.x=T[S.pos].wx+3;cam.y=T[S.pos].wy;lookAt=null;save();drawChips();pops=[];hud();flash('A fresh map from the Point')}
   el.addEventListener('click',e=>{if(e.target.closest('.c68reset'))reset();else if(e.target.closest('.c68keep'))fin.classList.remove('show');
-    else if(e.target.closest('.c68back')){location.href='../'}});
+    else if(e.target.closest('.c68back')){location.href=WORLDS_URL}});
   /* ---------- drawing ---------- */
   const COL={water:'#4a85b2',woods:'#a2c07c',town:'#e4dac4',dt:'#ccc5b8',park:'#8bbd60',hill:'#93b46c',cliff:'#a9916a',incline:'#a9916a'};
   const HOUSE=['#b8604a','#d6a650','#7193ad','#c7926c','#906690'];
@@ -732,7 +733,9 @@
     if(mo){mcx.save();mo.def.draw(mcx,mo,d,t);mcx.restore();if(mo.done){check(mcx,296,22,13);mo.dt+=d;if(mo.dt>1.05)nextMo()}}
     if(fin.classList.contains('show'))drawFin(d,t);
     miniT-=d;if(miniT<=0){miniT=.25;drawMini()}};
-  draw(0,0);scene(el,draw);
+  const pz=pauseMenu(el,{btnParent:$('.c68bar'),onRestart:()=>reset()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pz.toggle()}});
+  draw(0,0);scene(el,(dt,t)=>{if(!pz.open)draw(dt,t)});
 })();
 </script>
 </body>

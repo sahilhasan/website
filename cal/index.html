@@ -108,6 +108,8 @@
 .s67 .c67-pc small{font-size:1.5cqw;line-height:1.2;color:#cfd8e3}
 .s67 .c67-dr i.fg{background:#2a6b3a}
 .s67 .c67-box p.axe{font-size:2.3cqw;color:var(--tf)}
+.s67 .pz-btn{position:absolute;right:2.5%;top:12.5%;color:var(--tf);background:var(--tb);border:0;outline:.3cqw solid var(--tf);outline-offset:-.3cqw;padding:1cqw 1.2cqw;box-shadow:0 .5cqw 0 #000}
+.s67 .pz{--pz-font:'Press Start 2P',ui-monospace,monospace;--pz-bg:#001a33;--pz-fg:#fff;--pz-ac:#FDB515;--pz-hw:400;--pz-hs:3.2cqw;--pz-bs:2cqw;--pz-tt:uppercase}
 .s67 .c67-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 </head>
@@ -125,7 +127,6 @@
     <div class="c67-tick" id="c67-tick" hidden></div>
     <div class="c67-sel" id="c67-sel">
       <div class="c67-who"><b>SAHIL HASAN</b><span>Founder and CEO @ Dots</span></div>
-      <button type="button" class="c67-wld" id="c67-wld">&lt; WORLDS</button>
       <div class="c67-mid"><button type="button" class="c67-go" id="c67-go">KICK OFF</button><small>THE BIG GAME &middot; THE AXE IS ON THE LINE</small><small>BEST <span id="c67-sb">0</span> &middot; W <span id="c67-sw">0</span><span id="c67-p82s"></span></small></div>
     </div>
     <div class="c67-end" id="c67-end" hidden></div>
@@ -227,7 +228,7 @@
   const fmt=s=>`${Math.floor(Math.max(0,s)/60)}:${String(Math.max(0,Math.floor(s%60))).padStart(2,'0')}`;
   const yardText=y=>{y=Math.round(y);return y===50?'50':y<50?'CAL '+Math.max(1,y):'FURD '+Math.max(1,100-y)};
   let best=+store.get('shasan.cal.best',0)||0,wins=+store.get('shasan.cal.w',0)||0;$('sb').textContent=best;$('sw').textContent=wins;
-  const toWorlds=()=>{location.href='../'};
+  const toWorlds=()=>{location.href=WORLDS_URL};
   let mode='splash',G=null,S=null,cam=MIDX-W*.5,conf=[],party=0,shake=0;
   /* ---------- sim helpers ---------- */
   const X=u=>S.L+u*S.dir,U=p=>(p.x-S.L)*S.dir,dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -573,7 +574,7 @@
     const b=G.box,row=(n,o)=>`<tr><td>${n}</td><td>${o.yd}</td><td>${o.td}</td><td>${o.sk}</td><td>${o.pk}</td></tr>`;
     const gp=G.played,pl=gp?`<p>${gp.win?(gp.five?'THE PLAY. ':'RETURN TD. '):'THE PLAY FELL SHORT. '}${p8Pl(gp.lat,'LATERAL')}.</p>`:'';
     const dr=G.drives.map(d=>`<i class="${d.r==='TD'||d.r==='PLAY'?'td':d.r==='FG'?'fg':d.r==='INT'||d.r==='FUM'?'to':''}">${d.r}</i>`).join('');
-    endEl.innerHTML=`<div class="c67-box"><div class="c67-top"><div class="c67-res${win||tie?'':' l'}">${win?'W':tie?'T':'L'}</div><h3>CAL ${G.cal} &middot; FURD ${G.fur}</h3></div><p class="axe">${win?'THE AXE STAYS IN BERKELEY':tie?'NOBODY TAKES THE AXE':'THE AXE GOES TO THE FURD'}</p>${pl}<table class="c67-bx"><tr><th></th><th>YDS</th><th>TD</th><th>SACKS</th><th>PICKS</th></tr>${row('CAL',b.cal)}${row('FURD',b.fur)}</table><div class="c67-dr"><span>CAL DRIVES</span>${dr||'<i>-</i>'}</div><p>BEST ${best}${nb&&G.cal>0?' &middot; NEW':''}</p><p><em>SAHIL HASAN</em> &middot; UC BERKELEY &middot; B.S. EECS</p><div class="c67-btns"><button type="button" data-a="again">AGAIN</button><a class="li" href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LINKEDIN</a><button type="button" class="alt" data-a="w">WORLDS</button></div></div>`;endEl.hidden=false;
+    endEl.innerHTML=`<div class="c67-box"><div class="c67-top"><div class="c67-res${win||tie?'':' l'}">${win?'W':tie?'T':'L'}</div><h3>CAL ${G.cal} &middot; FURD ${G.fur}</h3></div><p class="axe">${win?'THE AXE STAYS IN BERKELEY':tie?'NOBODY TAKES THE AXE':'THE AXE GOES TO THE FURD'}</p>${pl}<table class="c67-bx"><tr><th></th><th>YDS</th><th>TD</th><th>SACKS</th><th>PICKS</th></tr>${row('CAL',b.cal)}${row('FURD',b.fur)}</table><div class="c67-dr"><span>CAL DRIVES</span>${dr||'<i>-</i>'}</div><p>BEST ${best}${nb&&G.cal>0?' &middot; NEW':''}</p><p><em>SAHIL HASAN</em> &middot; UC BERKELEY &middot; B.S. EECS</p><div class="c67-btns"><button type="button" data-a="again">PLAY AGAIN</button><button type="button" class="alt" data-a="w">WORLDS</button></div></div>`;endEl.hidden=false;
     wireEnd()}
   function wireEnd(){endEl.querySelectorAll('[data-a]').forEach(bb=>bb.addEventListener('click',()=>{const a=bb.dataset.a;if(a==='again'||a==='go')start();else toWorlds()}))}
   function start(){mode='play';P=null;chEl.hidden=true;moEl.hidden=false;ddEl.classList.remove('hot');selEl.hidden=true;endEl.hidden=true;bugEl.hidden=false;tickEl.hidden=true;
@@ -599,7 +600,7 @@
       let r=null,bd=34;elig().forEach(o=>{const d=Math.hypot(o.x-pos.x,o.y-pos.y);if(d<bd){bd=d;r=o}});if(r)throwTo(r);else throwAway();return}
     if(h&&(h!==q||q.scr)&&pos)S.steer={v:cl(pos.y,FT+4,FB-4),t:.7}}
   /* ---------- loop ---------- */
-  function update(dt){if(conf.length){conf.forEach(p=>{p.vy+=40*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt});conf=conf.filter(p=>p.l>0&&p.y<H+4)}if(party>0)party-=dt;if(shake>0)shake-=dt;
+  function update(dt){if(pz.open)return;if(conf.length){conf.forEach(p=>{p.vy+=40*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt});conf=conf.filter(p=>p.l>0&&p.y<H+4)}if(party>0)party-=dt;if(shake>0)shake-=dt;
     idleT+=dt;if(idleT>idleNext&&!stuntS){idleStunt();idleNext=6+R()*6}
     if(mode==='p82'){p82Update(dt);return}
     if(mode!=='play'||!S)return;S.t+=dt;if(S.np&&(S.np.t+=dt)>1.4)S.np=null;
@@ -758,7 +759,7 @@
     conf.forEach(q=>{x.fillStyle=q.c;x.fillRect(q.x|0,q.y|0,1,2)});x.restore()}
 
   /* ---------- wiring ---------- */
-  $('go').addEventListener('click',start);$('wld').addEventListener('click',toWorlds);rplB.addEventListener('click',startReplay);
+  $('go').addEventListener('click',start);rplB.addEventListener('click',startReplay);
   const posOf=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W+cam,y:(e.clientY-r.top)/r.height*H}};
   const poke=()=>{idleT=0};
   el.addEventListener('pointerdown',e=>{poke();if(e.target.closest&&e.target.closest('a,button,.c67-sel,.c67-end'))return;
@@ -766,16 +767,17 @@
     if(mode!=='play'||!S)return;act(posOf(e))});
   const pup=()=>{if(P)P.drag=0};el.addEventListener('pointerup',pup);el.addEventListener('pointercancel',pup);
   document.addEventListener('keydown',e=>{poke();const k=e.key,onBtn=!!(e.target&&e.target.closest&&e.target.closest('button,a'));
-    if(mode==='p82'){if(!P)return;if(k==='Escape'){e.preventDefault();return toSplash()}
-      return}
+    if(k==='Escape'){e.preventDefault();return pz.toggle()}
+    if(pz.open||mode==='p82')return;
     if(mode==='splash'){if((k==='Enter'||k===' ')&&!onBtn){e.preventDefault();start()}return}
-    if(mode!=='play'||!S)return;if(k==='Escape'){e.preventDefault();return toSplash()}
+    if(mode!=='play'||!S)return;
     if(S.ph==='call'&&k>='1'&&k<='4'){e.preventDefault();return pick(+k-1)}
     if(S.ph==='call'&&(k==='s'||k==='S')){e.preventDefault();return shuffle()}
     if(S.ph==='choice'&&k>='1'&&k<='3'){e.preventDefault();return choose(+k-1)}
     if((k==='r'||k==='R')&&S.ph==='dead'&&!rplB.hidden){e.preventDefault();return startReplay()}
     if((k==='ArrowUp'||k==='ArrowDown')&&S.ph==='live'&&!S.def){const h=holder();if(h&&(h!==S.O.QB||S.O.QB.scr)){e.preventDefault();S.steer={v:cl(h.y+(k==='ArrowUp'?-16:16),FT+4,FB-4),t:.7}}return}
     if(k===' '||k==='Enter'){if(onBtn&&(S.ph==='call'||S.ph==='choice'||S.ph==='dead'&&e.target===rplB))return;e.preventDefault();if(e.repeat)return;act(null)}});
+  const pz=pauseMenu(el,{onRestart:start,canRestart:()=>mode!=='splash'});
   toSplash();
   let last=null;const frame=(_,t)=>{const d=last==null?0:Math.min(.05,Math.max(0,t-last));last=t;update(d);draw(t,d)};
   frame(0,0);scene(el,frame);

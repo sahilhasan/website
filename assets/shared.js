@@ -22,3 +22,23 @@ function path(pts,t){ // pts: [[time,x,y],...]
 
 /* Mark a world as visited so the hub can show a check next to it. */
 function markVisited(world){store.set('shasan.visited.'+world,true)}
+
+/* Pause menu shared by every game: Resume, Restart, Worlds.
+   Each game places the button (o.btnParent), styles .pz with its own look,
+   freezes its loop while m.open is true, and calls m.toggle() on Escape. */
+const WORLDS_URL='../';
+function pauseMenu(screen,o){o=o||{};
+  const btn=document.createElement('button');btn.type='button';btn.className='pz-btn';btn.title='Pause (Esc)';btn.setAttribute('aria-label','Pause (Esc)');btn.innerHTML='<i></i><i></i>';
+  const ov=document.createElement('div');ov.className='pz';ov.hidden=true;ov.setAttribute('role','dialog');ov.setAttribute('aria-label','Paused');
+  ov.innerHTML='<div class="pz-box"><h3>Paused</h3><button type="button" data-a="resume">Resume</button><button type="button" data-a="restart">Restart</button><button type="button" data-a="worlds">Worlds</button></div>';
+  (o.btnParent||screen).appendChild(btn);screen.appendChild(ov);
+  const rs=ov.querySelector('[data-a=restart]');
+  const m={open:false,btn,ov,
+    show(){if(m.open)return;m.open=true;rs.hidden=!!(o.canRestart&&!o.canRestart());ov.hidden=false;if(o.onPause)o.onPause();try{ov.querySelector('button').focus({preventScroll:true})}catch(_){}},
+    hide(){if(!m.open)return;m.open=false;ov.hidden=true;if(o.onResume)o.onResume();try{screen.focus({preventScroll:true})}catch(_){}},
+    toggle(){m.open?m.hide():m.show()}};
+  btn.addEventListener('click',e=>{e.stopPropagation();m.show()});
+  ['pointerdown','pointerup','click'].forEach(t=>ov.addEventListener(t,e=>e.stopPropagation()));
+  ov.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a;
+    if(a==='resume')m.hide();else if(a==='restart'){m.hide();if(o.onRestart)o.onRestart()}else if(a==='worlds')location.href=WORLDS_URL});
+  return m}
