@@ -182,29 +182,28 @@
   function hcat(a,b,gap){const h=Math.max(a.length,b.length),pa=(h-a.length)>>1,pb=(h-b.length)>>1,wa=a[0].length,wb=b[0].length,out=[];
     for(let r=0;r<h;r++){out.push([...(a[r-pa]||Array(wa).fill(0)),...Array(gap).fill(0),...(b[r-pb]||Array(wb).fill(0))])}return out}
   const BEAR=['##........##','###......###','.##########.','############','###.####.###','############','####wwww####','###ww..ww###','.##wwwwww##.','..########..','....####....'].map(r=>[...r].map(ch=>ch==='#'?1:ch==='w'?2:0));
-  const OSKIS=['##........##...','###......##s...','.#########s#...','#########s##...','###.####s###...','############...','####wwww####...','###ww..ww###...','.##wwwwww##....','..########.....','....####.......'].map(r=>[...r].map(ch=>ch==='#'?1:ch==='w'?2:ch==='s'?3:0));
+  /* the oski.tv wordmark: white OSKI, gold TV, a lean and the navy speed slice */
+  const OSKITV=['..wwww...wwwww.ww..ww.ww.gggggg.gg..gg','.wwwwww.wwwwww.ww.ww..ww.gggggg.gg..gg','.ww..ww.ww.....wwww...ww...gg...gg..gg','.ww..ww.wwwww..www....ww...gg...gg..gg','......................................','ww..ww..wwwww.www....ww...gg...gg..gg.','ww..ww.....ww.wwww...ww...gg....gggg..','wwwwww.wwwwww.ww.ww..ww...gg....gggg..','.wwww..wwwww..ww..ww.ww...gg.....gg...'].map(r=>[...r].map(ch=>ch==='w'?1:ch==='g'?2:0));
   const DOTSG=(()=>{const n=11,s=4,cv=document.createElement('canvas');cv.width=cv.height=n*s;const q=cv.getContext('2d');q.scale(n*s/190,n*s/188);q.fill(MARKP);
     const d=q.getImageData(0,0,n*s,n*s).data,g=[];for(let r=0;r<n;r++){g.push([]);for(let k=0;k<n;k++){let a=0;for(let yy=0;yy<s;yy++)for(let xx=0;xx<s;xx++)a+=d[((r*s+yy)*n*s+(k*s+xx))*4+3];g[r].push(a/(s*s)>100?1:0)}}return g})();
   const SN=88,SX0=(W-SN*2)>>1,SY0=18;
   let stuntS=null,dotsUsed=false,lastIdle='',idleT=0,idleNext=5+R()*3;
-  function stunt(kind){let g=null,fn=null,pal={bg:'#003262',c1:'#FDB515',c2:'#ffffff',c3:'#ff5c4d'},dur=3.4,wave=0;
+  function stunt(kind){let g=null,fn=null,pal={bg:'#003262',c1:'#FDB515',c2:'#ffffff'},dur=3.4;
     if(kind==='BEAR')g=hcat(BEAR,txtGrid('CAL'),3);
     else if(kind==='DOTS'){g=DOTSG;pal={bg:'#212121',c1:Y,c2:Y}}
-    else if(kind==='OSKI STRAW'){g=hcat(OSKIS,txtGrid('SICKOS'),3);wave=1}
-    else if(kind==='SICKOS TEAM'){g=txtGrid('SICKOS TEAM');wave=1}
-    else if(kind==='OSKI.TV'){g=txtGrid('OSKI.TV');pal={bg:'#FDB515',c1:'#003262',c2:'#ffffff'};wave=1}
+    else if(kind==='OSKI.TV'){g=OSKITV;pal={bg:'#0c1626',c1:'#ffffff',c2:'#FDB515'}}
     else if(kind==='WAVE'){dur=4.4;fn=(r,k,T)=>{const wp=(T-.25)/(dur-.9)*(SN+20)-10,dd=k-wp+Math.abs(r-5)*.6;return Math.abs(dd)<2.6?(Math.abs(dd)<1.2?'#ffffff':'#FDB515'):'#003262'}}
     else if(kind==='CHECK'){dur=4;fn=(r,k,T)=>{const d=Math.hypot((k-SN/2)/2,r-5),v=((k>>1)+(r>>1)+Math.floor(d*.55-T*4))&1;return v?'#FDB515':'#003262'}}
     else g=txtGrid(kind);
-    if(!pal.c3)pal.c3='#ff5c4d';if(wave)dur=4.2;stuntS={g,fn,pal,t:0,dur,wave};idleT=0}
+    stuntS={g,fn,pal,t:0,dur};idleT=0}
   function drawStunt(dt){const s=stuntS;if(!s)return;s.t+=dt;const T=s.t,dur=s.dur;if(T>dur+.9){stuntS=null;return}
     const g=s.g,gh=g?g.length:0,gw=g?g[0].length:0,ox=(SN-gw)>>1,oy=(11-gh)>>1;
     for(let r=0;r<11;r++)for(let k=0;k<SN;k++){const ts=k*.011+r*.008,te=dur-.75+k*.006+r*.004;if(T<ts||T>te+.12)continue;
-      let col;if(s.fn)col=s.fn(r,k,T);else{const gi=r-oy-(s.wave?Math.round(Math.sin(k*.3-T*5)):0),gj=k-ox,v=(gi>=0&&gi<gh&&gj>=0&&gj<gw)?g[gi][gj]:0;col=v===1?s.pal.c1:v===2?s.pal.c2:v===3?s.pal.c3:s.pal.bg}
+      let col;if(s.fn)col=s.fn(r,k,T);else{const gi=r-oy,gj=k-ox,v=(gi>=0&&gi<gh&&gj>=0&&gj<gw)?g[gi][gj]:0;col=v===1?s.pal.c1:v===2?s.pal.c2:s.pal.bg}
       let hh=2;if(T<ts+.12)hh=Math.abs(1-2*(T-ts)/.12)*2;else if(T>te)hh=Math.abs(1-2*(T-te)/.12)*2;
       x.fillStyle=(T<ts+.06||T>te+.06)?'#f2f2f2':col;x.fillRect(SX0+k*2,SY0+r*2+(2-hh)/2,2,Math.max(.5,hh))}}
   /* idle stunts: the student section keeps busy when nobody is touching anything */
-  const IDLE=[['CAL',3],['GO BEARS',3],['GEAUX BEARS',2],['BEAT FURD',2],['BEAR',2],['WAVE',2],['CHECK',2],['FIAT LUX',1.5],['OSKI STRAW',2],['SICKOS TEAM',2],['OSKI.TV',2],['DOTS',.35]];
+  const IDLE=[['CAL',3],['GO BEARS',3],['GEAUX BEARS',2],['BEAT FURD',2],['BEAR',2],['WAVE',2],['CHECK',2],['FIAT LUX',1.5],['OSKI.TV',2],['DOTS',.35]];
   function idleStunt(){const tot=IDLE.reduce((a,b)=>a+b[1],0);let k='CAL';for(let n=0;n<6;n++){let r=R()*tot;for(const[nm,w]of IDLE){r-=w;if(r<=0){k=nm;break}}if(k!==lastIdle)break}lastIdle=k;stunt(k)}
   /* ---------- stadium ---------- */
   let crowd=[];(()=>{const r=rng(73),cc=['#003262','#FDB515','#FDB515','#e9e9e9','#8C1515','#2a5db0'];for(let i=0;i<WW;i+=2)for(let j=0;j<7;j++)crowd.push([i,18+j*3,cc[(r()*cc.length)|0]])})();
