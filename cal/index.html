@@ -203,7 +203,7 @@
       let hh=2;if(T<ts+.12)hh=Math.abs(1-2*(T-ts)/.12)*2;else if(T>te)hh=Math.abs(1-2*(T-te)/.12)*2;
       x.fillStyle=(T<ts+.06||T>te+.06)?'#f2f2f2':col;x.fillRect(SX0+k*2,SY0+r*2+(2-hh)/2,2,Math.max(.5,hh))}}
   /* idle stunts: the student section keeps busy when nobody is touching anything */
-  const IDLE=[['CAL',3],['GO BEARS',3],['GEAUX BEARS',2],['BEAT FURD',2],['BEAR',2],['WAVE',2],['CHECK',2],['FIAT LUX',1.5],['OSKI.TV',2],['DOTS',.35]];
+  const IDLE=[['CAL',3],['GO BEARS',3],['GEAUX BEARS',2],['BEAR',2],['WAVE',2],['CHECK',2],['FIAT LUX',1.5],['OSKI.TV',2],['DOTS',.35]];
   function idleStunt(){const tot=IDLE.reduce((a,b)=>a+b[1],0);let k='CAL';for(let n=0;n<6;n++){let r=R()*tot;for(const[nm,w]of IDLE){r-=w;if(r<=0){k=nm;break}}if(k!==lastIdle)break}lastIdle=k;stunt(k)}
   /* ---------- stadium ---------- */
   let crowd=[];(()=>{const r=rng(73),cc=['#003262','#FDB515','#FDB515','#e9e9e9','#8C1515','#2a5db0'];for(let i=0;i<WW;i+=2)for(let j=0;j<7;j++)crowd.push([i,18+j*3,cc[(r()*cc.length)|0]])})();
@@ -564,7 +564,7 @@
   function toFurd(spot){if(G.clock<=0)return quarterEnd(()=>toFurd(spot));G.poss='fur';G.fl=spot;G.fdn=1;G.ffd=Math.max(0,spot-10);newSnap()}
   const kickFurd=()=>toFurd(Math.round(70-R()*8));
   function toCal(at){if(G.clock<=0)return quarterEnd(()=>toCal(at));G.furdKick=0;G.laird=0;G.poss='cal';G.los=at;G.fd=Math.min(100,at+10);G.down=1;G.drv=at;
-    if(G.q===4&&G.clock<=35&&!G.fdShown){G.fdShown=1;newSnap();flash('FINAL DRIVE','',0,1.1,1);stunt('BEAT FURD');return}newSnap()}
+    if(G.q===4&&G.clock<=35&&!G.fdShown){G.fdShown=1;newSnap();flash('FINAL DRIVE','',0,1.1,1);stunt('GO BEARS');return}newSnap()}
   function startReplay(){if(!S||S.ph!=='dead'||!S.fr.length)return;rplB.hidden=true;ban.hidden=true;S.rp={i:Math.max(0,S.fr.length-80)};S.ph='replay'}
   function final(){mode='over';G.clock=0;hud();ddEl.innerHTML='FINAL';ddEl.classList.remove('hot');sheet.hidden=true;cue.hidden=true;ban.hidden=true;rplB.hidden=true;if(G.poss==='cal')endDrive('END');
     const win=G.cal>G.fur,tie=G.cal===G.fur;if(win){wins++;store.set('shasan.cal.w',wins)}const nb=G.cal>best;if(nb){best=G.cal;store.set('shasan.cal.best',best)}$('sb').textContent=best;$('sw').textContent=wins;
@@ -719,7 +719,7 @@
     if(!tb.flat){moveTo(c2,tb.x,tb.y,c2.sp*.9,dt);if(Math.hypot(c2.x-tb.x,c2.y-tb.y)<5||p.t>1.4){tb.flat=1;tb.x+=3;
         p.horn={x:tb.x,y:tb.y-4,vx:34,vy:-70,a:0,va:9,gy:tb.y+2,rest:0};p.txt.push({s:'BWAMP!',x:tb.x+6,y:tb.y-14,t:0});shake=.45;p.hitT=p.t}}
     else{moveTo(c2,c2.x+6,c2.y,10,dt);if(p.t-p.hitT>1&&!p.won){p.won=1;p82Win()}}}
-  function p82Win(){const p=P,five=p.lat>=5;p8Go('done');celebrate(['#FDB515','#003262','#fff']);party=4;stunt(five?'THE PLAY':'GO BEARS');
+  function p82Win(){const p=P,five=p.lat>=5;p8Go('done');celebrate(['#FDB515','#003262','#fff']);party=4;stunt('GO BEARS');
     if(five&&!p82Done){p82Done=true;store.set('shasan.cal.play1982',true);p82Tag()}
     flash(five?'THE PLAY':'TOUCHDOWN!',five?`${p8Pl(p.lat,'LATERAL')} &middot; 1982 LIVES`:`${p8Pl(p.lat,'LATERAL')} &middot; THE REAL ONE HAD 5`,0,0,1);
     setTimeout(()=>{if(mode==='p82'&&P===p)p82End(true)},2600)}
