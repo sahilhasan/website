@@ -109,17 +109,17 @@
   const bank=(x0,x1,y,dir)=>dir<0?[[x0,y],[x1,y],[x1+.6,y+2.2],[x1+1.2,WH],[x0,WH]]:[[x0,y],[x1,y],[x1,WH],[x0-1.2,WH],[x0-.6,y+2.2]];
   const LV=[
     {name:'Panther Hollow',sub:'The CMU buggy crosses Schenley Park',veh:['buggy'],budget:2400,water:19,
-     land:[bank(0,15,12,-1),bank(23,40,12,1)],anchors:[[15,12],[15.6,14],[23,12],[22.4,14]],sky:'park'},
-    {name:'Junction Hollow',sub:'Get the 71B down to Oakland',veh:['bus'],budget:6000,water:19.5,
-     land:[bank(0,14,12,-1),bank(24,40,12,1)],anchors:[[14,12],[14.6,14],[24,12],[23.4,14]],sky:'park'},
-    {name:'Hot Metal',sub:'A Primanti’s truck to the South Side',veh:['truck'],budget:14000,water:18,pier:[[18.6,15],[21.4,15],[22,WH],[18,WH]],
-     land:[bank(0,12,12,-1),bank(28,40,12,1)],anchors:[[12,12],[12.6,14],[28,12],[27.4,14],[19,15],[21,15]],sky:'river'},
-    {name:'North Shore',sub:'The Pitt team bus to Heinz Field',veh:['pitt'],budget:23500,water:18.5,pier:[[18.6,16],[21.4,16],[22,WH],[18,WH]],
-     land:[bank(0,11,12,-1),bank(29,40,11,1)],anchors:[[11,12],[11.6,14],[29,11],[28.4,13],[19,16],[21,16]],sky:'stadium'},
-    {name:'The Strip',sub:'Buggy first, then a lunch delivery',veh:['buggy','truck'],budget:8000,water:18.5,
-     land:[bank(0,13,11,-1),bank(26,40,12,1)],anchors:[[13,11],[13.6,13],[26,12],[25.4,14]],sky:'river'},
-    {name:'Three Rivers',sub:'All four, across the Point',veh:['buggy','bus','truck','pitt'],budget:26000,water:18,pier:[[18.6,15],[21.4,15],[22,WH],[18,WH]],
-     land:[bank(0,10,12,-1),bank(30,40,12,1)],anchors:[[10,12],[10.6,14],[30,12],[29.4,14],[19,15],[21,15]],sky:'point'}];
+     land:[bank(0,15,12,-1),bank(23,60,12,1)],anchors:[[15,12],[15.6,14],[23,12],[22.4,14]],sky:'park'},
+    {name:'Junction Hollow',sub:'Get the 71B down to Oakland',veh:['bus'],budget:6300,water:19.5,
+     land:[bank(0,14,12,-1),bank(24,60,12,1)],anchors:[[14,12],[14.6,14],[24,12],[23.4,14]],sky:'park'},
+    {name:'Hot Metal',sub:'A Primanti’s truck to the South Side',veh:['truck'],budget:9500,water:18,pier:[[18.6,15],[21.4,15],[22,WH],[18,WH]],
+     land:[bank(0,12,12,-1),bank(28,60,12,1)],anchors:[[12,12],[12.6,14],[28,12],[27.4,14],[19,15],[21,15]],sky:'river'},
+    {name:'North Shore',sub:'The Pitt team bus to Heinz Field',veh:['pitt'],budget:13200,water:18.5,pier:[[18.6,16],[21.4,16],[22,WH],[18,WH]],
+     land:[bank(0,11,12,-1),bank(29,60,11,1)],anchors:[[11,12],[11.6,14],[29,11],[28.4,13],[19,16],[21,16]],sky:'stadium'},
+    {name:'The Strip',sub:'Buggy first, then a lunch delivery',veh:['buggy','truck'],budget:9800,water:18.5,
+     land:[bank(0,13,12,-1),bank(27,60,12,1)],anchors:[[13,12],[13.6,14],[27,12],[26.4,14]],sky:'river'},
+    {name:'Three Rivers',sub:'All four, across the Point',veh:['buggy','bus','truck','pitt'],budget:12500,water:18,pier:[[18.6,15],[21.4,15],[22,WH],[18,WH]],
+     land:[bank(0,10,12,-1),bank(30,60,12,1)],anchors:[[10,12],[10.6,14],[30,12],[29.4,14],[19,15],[21,15]],sky:'point'}];
   const START_X=3,FINISH_X=37.5;
   /* ---------- state ---------- */
   const KP='shasan.pgh.bridges.v1',KS='shasan.pgh.stars.v1';
@@ -176,25 +176,25 @@
     /* spawn the next vehicle once the road behind the last one is clear */
     if(S.queue.length){const last=S.cars[S.cars.length-1];if(!last||last.done||last.dead||Math.min(last.wh[0].x,last.wh[1].x)>START_X+VEH[S.queue[0]].len+2.5)spawn(S.queue.shift())}
     P.forEach(p=>{if(!p.w)return;p.vy+=G*h;p.px=p.x;p.py=p.y;p.x+=p.vx*h;p.y+=p.vy*h});
-    S.cars.forEach(c=>c.wh.forEach(q=>{q.vx=(q.vx||0);q.vy=(q.vy||0)+G*h;q.px=q.x;q.py=q.y;q.x+=q.vx*h;q.y+=q.vy*h}));
+    S.cars.forEach(c=>{if(c.gone)return;c.wh.forEach(q=>{q.vx=(q.vx||0);q.vy=(q.vy||0)+G*h;q.px=q.x;q.py=q.y;q.x+=q.vx*h;q.y+=q.vy*h})});
     const a2=h*h;
     S.M.forEach(m=>{if(m.broken)return;const a=P[m.a],b=P[m.b],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1e-9,C=d-m.rest,wsum=a.w+b.w;if(!wsum){m.f=0;return}
       const al=MAT[m.t].comp/a2,dl=-C/(wsum+al),nx=dx/d,ny=dy/d;a.x-=nx*dl*a.w;a.y-=ny*dl*a.w;b.x+=nx*dl*b.w;b.y+=ny*dl*b.w;m.f=dl/a2});
-    S.cars.forEach(c=>{const[a,b]=c.wh,dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1e-9,C=d-c.V.len,dl=-C/(a.w+b.w),nx=dx/d,ny=dy/d;a.x-=nx*dl*a.w;a.y-=ny*dl*a.w;b.x+=nx*dl*b.w;b.y+=ny*dl*b.w;
+    S.cars.forEach(c=>{if(c.gone)return;const[a,b]=c.wh,dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1e-9,C=d-c.V.len,dl=-C/(a.w+b.w),nx=dx/d,ny=dy/d;a.x-=nx*dl*a.w;a.y-=ny*dl*a.w;b.x+=nx*dl*b.w;b.y+=ny*dl*b.w;
       c.wh.forEach(q=>{q.on=0;const r=c.V.r;
         surf.forEach(([ax,ay,bx,by])=>{const s=segPt(q.x,q.y,ax,ay,bx,by),ex=q.x-s.x,ey=q.y-s.y,dd=Math.hypot(ex,ey);if(dd<r&&dd>1e-9){const pen=r-dd;q.x+=ex/dd*pen;q.y+=ey/dd*pen;if(ey<0){q.on=1;const tl=Math.hypot(bx-ax,by-ay)||1;q.tx=(bx-ax)/tl*Math.sign(bx-ax||1);q.ty=(by-ay)/tl*Math.sign(bx-ax||1)}}});
         S.M.forEach(m=>{if(m.broken||m.t!=='road')return;const A=P[m.a],B=P[m.b],s=segPt(q.x,q.y,A.x,A.y,B.x,B.y),ex=q.x-s.x,ey=q.y-s.y,dd=Math.hypot(ex,ey);if(dd>=r||dd<1e-9||ey>0)return;
           const nx=ex/dd,ny=ey/dd,pen=r-dd,wa=A.w*(1-s.t),wb=B.w*s.t,ws=q.w+wa+wb,k=pen/ws;q.x+=nx*k*q.w;q.y+=ny*k*q.w;A.x-=nx*k*wa;A.y-=ny*k*wa;B.x-=nx*k*wb;B.y-=ny*k*wb;
           q.on=1;const tl=Math.hypot(B.x-A.x,B.y-A.y)||1,sg=Math.sign(B.x-A.x||1);q.tx=(B.x-A.x)/tl*sg;q.ty=(B.y-A.y)/tl*sg})})});
     P.forEach(p=>{if(!p.w)return;p.vx=(p.x-p.px)/h;p.vy=(p.y-p.py)/h;p.vx*=.999;p.vy*=.999});
-    S.cars.forEach(c=>{c.wh.forEach(q=>{q.vx=(q.x-q.px)/h;q.vy=(q.y-q.py)/h;
-      if(q.on&&!c.done){const vt=q.vx*q.tx+q.vy*q.ty,dv=Math.max(-14*h,Math.min(14*h,c.V.sp-vt));q.vx+=q.tx*dv;q.vy+=q.ty*dv}});
-      if(c.done){c.wh.forEach(q=>{q.vx*=.98})}});
+    S.cars.forEach(c=>{if(c.gone)return;c.wh.forEach(q=>{q.vx=(q.x-q.px)/h;q.vy=(q.y-q.py)/h;
+      if(q.on){const vt=q.vx*q.tx+q.vy*q.ty,dv=Math.max(-14*h,Math.min(14*h,c.V.sp-vt));q.vx+=q.tx*dv;q.vy+=q.ty*dv}});
+      });
     /* break overloaded beams: a beam snaps when its force stays above its strength */
     S.M.forEach(m=>{if(m.broken)return;const lim=MAT[m.t].str;m.hot=Math.min(1,Math.abs(m.f)/lim);if(Math.abs(m.f)>lim){m.over=(m.over||0)+h;if(m.over>.03){m.broken=true;S.snaps=(S.snaps||0)+1}}else m.over=0})}
   function simUpdate(dt){if(!sim||mode!=='test')return;let n=Math.max(1,Math.round(dt*60*SUB/1));const h=Math.min(dt,1/30)/n;for(let i=0;i<n;i++)step(h);sim.t+=dt;
     const S=sim;let allDone=S.queue.length===0&&S.cars.length>0;
-    S.cars.forEach(c=>{const fx=Math.min(c.wh[0].x,c.wh[1].x),fy=Math.max(c.wh[0].y,c.wh[1].y);if(!c.done&&!c.dead&&fx>FINISH_X){c.done=1;S.done++}
+    S.cars.forEach(c=>{if(c.done&&Math.min(c.wh[0].x,c.wh[1].x)>WW+3)c.gone=1;const fx=Math.min(c.wh[0].x,c.wh[1].x),fy=Math.max(c.wh[0].y,c.wh[1].y);if(!c.done&&!c.dead&&fx>FINISH_X){c.done=1;S.done++}
       if(!c.done&&!c.dead&&fy>L.water+.3){c.dead=1;fail(c.V.n+' went in the river')}
       if(!c.done&&!c.dead){if(fx>c.best+.05){c.best=fx;c.still=0}else c.still+=dt;if(c.still>5)fail(c.V.n+' got stuck')}
       if(!c.done)allDone=false});
@@ -204,7 +204,7 @@
   function win(){const c=cost(),s=starsFor(c);result='win';stars[li]=Math.max(stars[li]||0,s);store.set(KS,stars);lvls();
     const last=li===LV.length-1,total=LV.reduce((t,_,i)=>t+(stars[i]||0),0);
     setTimeout(()=>{if(mode!=='test'||result!=='win')return;
-      if(last)card(`<h2>Pittsburgh, spanned</h2><div class="stars">${'★'.repeat(total)}<em>${'★'.repeat(LV.length*3-total)}</em></div><p>Six crossings, ${total} of ${LV.length*3} stars. Pittsburgh has 446 bridges; you built a few more.</p><p class="who">Sahil Hasan &middot; M.S. Computer Science, Carnegie Mellon</p><div class="btns"><button type="button" class="pri" data-a="again">Play again</button><button type="button" data-a="worlds">Worlds</button></div>`);
+      if(last)card(`<h2>Pittsburgh, spanned</h2><div class="stars">★ ${total}<em> / ${LV.length*3}</em></div><p>Six crossings, ${total} of ${LV.length*3} stars. Pittsburgh has 446 bridges; you built a few more.</p><p class="who">Sahil Hasan &middot; M.S. Computer Science, Carnegie Mellon</p><div class="btns"><button type="button" class="pri" data-a="again">Play again</button><button type="button" data-a="worlds">Worlds</button></div>`);
       else card(`<h3>The bridge held</h3><div class="stars">${'★'.repeat(s)}<em>${'★'.repeat(3-s)}</em></div><p><b>$${c.toLocaleString()}</b> of $${L.budget.toLocaleString()}. ${s<3?'Spend under $'+Math.floor(L.budget*(s<2?.85:.7)).toLocaleString()+' for '+(s+1)+' stars.':'Three stars.'}</p><div class="btns"><button type="button" class="pri" data-a="next">Next crossing</button><button type="button" data-a="edit">Edit bridge</button></div>`)},900);
     ban('Made it',sim.cars.length>1?'Every vehicle across':'Across the river')}
   function fail(why){if(result)return;result='fail';ban('Splash',why);hint('Tap anywhere to edit the bridge')}
@@ -274,7 +274,7 @@
     x.restore();[a,b].forEach(q=>{const qx=c.k==='buggy'||zoom?q.x:q.x,qy=q.y;x.fillStyle='#111';x.beginPath();x.arc(qx,qy,r,0,7);x.fill();x.fillStyle='#9a9a9a';x.beginPath();x.arc(qx,qy,r*.45,0,7);x.fill()})}
   function draw(dt,t){if(!V||!V.w)resize();const x=V.x,s=sc();sky(x,t);water(x,t);land(x);if(mode==='build')grid(x);
     if(mode==='test'&&sim){const P=sim.P;sim.M.forEach(m=>{if(!m.broken)beam(x,P[m.a],P[m.b],m.t,m.hot,s)});P.forEach((p,i)=>{if(i<L.anchors.length)joint(x,p,s)});
-      x.save();x.scale(s,s);sim.cars.forEach(c=>drawCar(x,c));x.restore()}
+      x.save();x.scale(s,s);sim.cars.forEach(c=>{if(!c.gone)drawCar(x,c)});x.restore()}
     else{mems.forEach(m=>beam(x,nodes[m.a],nodes[m.b],m.t,null,s));
       if(drag&&drag.moved){const t2=target(drag.x,drag.y,drag.from),ok=canPlace(t2,drag.from),f=nodes[drag.from];x.globalAlpha=.75;beam(x,f,{x:t2.x,y:t2.y},mat,null,s);x.globalAlpha=1;
         x.strokeStyle=ok?'rgba(255,255,255,.5)':'rgba(255,107,94,.8)';x.lineWidth=1;x.beginPath();x.arc(sx(f.x),sy(f.y),MAXLEN*s,0,7);x.stroke();
