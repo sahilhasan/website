@@ -145,15 +145,23 @@
   function restore(s){const o=JSON.parse(s);nodes=o.n.map(([x,y,fix])=>({x,y,fix}));mems=o.m}
   function prune(){const used=new Set();mems.forEach(m=>{used.add(m.a);used.add(m.b)});const keep=[],map={};nodes.forEach((p,i)=>{if(p.fix||used.has(i)){map[i]=keep.length;keep.push(p)}});mems=mems.map(m=>({a:map[m.a],b:map[m.b],t:m.t}));nodes=keep}
   /* ---------- building ---------- */
-  const SNAP=.5;
-  function nodeAt(x,y,r){let best=-1,bd=r;nodes.forEach((p,i)=>{const d=Math.hypot(p.x-x,p.y-y);if(d<bd){bd=d;best=i}});return best}
+  /* building snaps to the visible 1 m grid; an end near an existing joint always connects to it */
+  const SNAP=1,PICK=.7;
+  function nodeAt(x,y,r,skip){let best=-1,bd=r;nodes.forEach((p,i)=>{if(i===skip)return;const d=Math.hypot(p.x-x,p.y-y);if(d<bd){bd=d;best=i}});return best}
   function memAt(x,y){let best=-1,bd=.35;mems.forEach((m,i)=>{const a=nodes[m.a],b=nodes[m.b],q=segPt(x,y,a.x,a.y,b.x,b.y),d=Math.hypot(q.x-x,q.y-y);if(d<bd){bd=d;best=i}});return best}
-  function target(x,y,from){const ni=nodeAt(x,y,.45);if(ni>=0&&ni!==from)return{i:ni,x:nodes[ni].x,y:nodes[ni].y};let sx=Math.round(x/SNAP)*SNAP,sy=Math.round(y/SNAP)*SNAP;
-    const f=nodes[from],dx=sx-f.x,dy=sy-f.y,d=Math.hypot(dx,dy);if(d>MAXLEN){const k=MAXLEN/d;sx=Math.round((f.x+dx*k)/SNAP)*SNAP;sy=Math.round((f.y+dy*k)/SNAP)*SNAP;if(Math.hypot(sx-f.x,sy-f.y)>MAXLEN+1e-6){sx=f.x+Math.trunc(dx*k/SNAP)*SNAP;sy=f.y+Math.trunc(dy*k/SNAP)*SNAP}}
-    return{i:-1,x:sx,y:sy}}
+  function target(x,y,from){const f=nodes[from];let ni=nodeAt(x,y,.6,from);if(ni>=0&&Math.hypot(nodes[ni].x-f.x,nodes[ni].y-f.y)<=MAXLEN+1e-6)return{i:ni,x:nodes[ni].x,y:nodes[ni].y};
+    /* nearest grid dot to the pointer that the beam can reach */
+    let best=null,bd=1e9;const cx=Math.round(x),cy=Math.round(y);
+    for(let gx=cx-3;gx<=cx+3;gx++)for(let gy=cy-3;gy<=cy+3;gy++){const l=Math.hypot(gx-f.x,gy-f.y);if(l>MAXLEN+1e-6||l<.9)continue;const d=Math.hypot(gx-x,gy-y);if(d<bd){bd=d;best={x:gx,y:gy}}}
+    if(!best)return{i:-1,x:f.x,y:f.y};
+    ni=nodeAt(best.x,best.y,.35,from);if(ni>=0)return{i:ni,x:nodes[ni].x,y:nodes[ni].y};return{i:-1,x:best.x,y:best.y}}
   function canPlace(t,from){const f=nodes[from],d=Math.hypot(t.x-f.x,t.y-f.y);if(d<.4||d>MAXLEN+1e-6)return false;if(t.i<0&&(t.y<1||t.y>L.water-.2||t.x<.5||t.x>WW-.5||solid({x:t.x,y:t.y})))return false;
     if(t.i>=0&&mems.some(m=>(m.a===from&&m.b===t.i)||(m.b===from&&m.a===t.i)))return false;return true}
-  function addMember(from,t){snapshot();let bi=t.i;if(bi<0){nodes.push({x:t.x,y:t.y,fix:0});bi=nodes.length-1}mems.push({a:from,b:bi,t:mat});persist();ui();return bi}
+  /* joints the new beam passes straight over, in order, so the beam connects through them */
+  function through(from,bi){const A=nodes[from],B=nodes[bi],hits=[];nodes.forEach((p,i)=>{if(i===from||i===bi)return;const q=segPt(p.x,p.y,A.x,A.y,B.x,B.y);if(q.t>.02&&q.t<.98&&Math.hypot(q.x-p.x,q.y-p.y)<.12)hits.push([q.t,i])});return hits.sort((u,v)=>u[0]-v[0]).map(h=>h[1])}
+  const hasMem=(a,b)=>mems.some(m=>(m.a===a&&m.b===b)||(m.a===b&&m.b===a));
+  function addMember(from,t){snapshot();let bi=t.i;if(bi<0){nodes.push({x:t.x,y:t.y,fix:0});bi=nodes.length-1}
+    const chain=[from,...through(from,bi),bi];for(let k=1;k<chain.length;k++)if(!hasMem(chain[k-1],chain[k]))mems.push({a:chain[k-1],b:chain[k],t:mat});persist();ui();return bi}
   function delMember(i){snapshot();mems.splice(i,1);prune();persist();ui()}
   /* ---------- physics: XPBD with small substeps ---------- */
   function startSim(){if(cost()>L.budget){flashHint('Over budget: remove some beams');return}if(!mems.some(m=>m.t==='road')){flashHint('Add some road for the wheels');return}
@@ -222,14 +230,19 @@
   function drawVehChips(){const box=$('veh');box.innerHTML='';L.veh.forEach(k=>{const Vv=VEH[k],c=document.createElement('canvas');c.width=104;c.height=52;c.title=Vv.n;c.setAttribute('aria-label',Vv.n);box.appendChild(c);const x=c.getContext('2d'),z=Math.min(104/(Vv.len+2.6),40/3.6);x.translate(52,46);x.scale(z,z);drawCar(x,{k,V:Vv,wh:[{x:-Vv.len/2,y:-Vv.r},{x:Vv.len/2,y:-Vv.r}]})})}
   /* ---------- input ---------- */
   let V=null;const toW=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*WW,y:(e.clientY-r.top)/r.height*WH}};
-  cv.addEventListener('pointerdown',e=>{if(pz.open||!$('card').hidden)return;const p=toW(e);
+  let press=null;
+  cv.addEventListener('contextmenu',e=>{e.preventDefault();if(mode!=='build'||pz.open)return;const p=toW(e),mi=memAt(p.x,p.y);if(mi>=0){delMember(mi);flashHint('Beam removed')}});
+  cv.addEventListener('pointerdown',e=>{if(pz.open||!$('card').hidden||e.button===2)return;const p=toW(e);
     if(mode==='test'){if(result==='fail')stopSim();return}
-    const ni=nodeAt(p.x,p.y,.55);if(ni>=0){drag={from:ni,x:p.x,y:p.y,moved:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}return}
-    const mi=memAt(p.x,p.y);if(mi>=0){delMember(mi);flashHint('Beam removed');return}
-    flashHint('Start a beam from a red anchor or a joint')});
-  cv.addEventListener('pointermove',e=>{const p=toW(e);hover=p;if(drag){drag.x=p.x;drag.y=p.y;drag.moved=true}});
-  const up=e=>{if(!drag)return;const p=toW(e),t=target(p.x,p.y,drag.from);if(canPlace(t,drag.from)){const bi=addMember(drag.from,t);if(e.shiftKey){drag={from:bi,x:p.x,y:p.y};return}}else if(Math.hypot(p.x-nodes[drag.from].x,p.y-nodes[drag.from].y)>.6)flashHint('Too long, or inside the ground');drag=null};
-  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',()=>{drag=null});cv.addEventListener('pointerleave',()=>{hover=null});
+    const ni=nodeAt(p.x,p.y,PICK);try{cv.setPointerCapture(e.pointerId)}catch(_){}
+    if(ni>=0){drag={from:ni,x:p.x,y:p.y,moved:false};return}
+    press={x:p.x,y:p.y,mi:memAt(p.x,p.y)}});
+  cv.addEventListener('pointermove',e=>{const p=toW(e);hover=p;if(drag){drag.x=p.x;drag.y=p.y;if(Math.hypot(p.x-nodes[drag.from].x,p.y-nodes[drag.from].y)>.3)drag.moved=true}});
+  const up=e=>{const p=toW(e);
+    if(press){const tap=Math.hypot(p.x-press.x,p.y-press.y)<.3,mi=press.mi;press=null;if(!tap)return;if(mi>=0&&memAt(p.x,p.y)===mi){delMember(mi);flashHint('Beam removed')}else flashHint('Start a beam from a red anchor or a joint');return}
+    if(!drag)return;const d=drag;drag=null;if(!d.moved)return;const t=target(p.x,p.y,d.from);
+    if(canPlace(t,d.from))addMember(d.from,t);else flashHint(t.y>L.water-.2?'That’s in the river':solid({x:t.x,y:t.y})&&t.i<0?'That’s inside the ground':'Can’t place a beam there')};
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',()=>{drag=null;press=null});cv.addEventListener('pointerleave',()=>{hover=null});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(drag){drag=null;return}pz.toggle();return}if(pz.open||!$('card').hidden)return;
     const k=e.key.toLowerCase();if(k==='1'||k==='2'||k==='3'){mat=['road','wood','steel'][+k-1];ui()}else if((e.metaKey||e.ctrlKey)&&k==='z'){e.preventDefault();$('undo').click()}else if(k===' '&&e.target===el){e.preventDefault();$('go').click()}});
   /* ---------- drawing ---------- */
@@ -263,10 +276,12 @@
     if(mode==='test'&&sim){const P=sim.P;sim.M.forEach(m=>{if(!m.broken)beam(x,P[m.a],P[m.b],m.t,m.hot,s)});P.forEach((p,i)=>{if(i<L.anchors.length)joint(x,p,s)});
       x.save();x.scale(s,s);sim.cars.forEach(c=>drawCar(x,c));x.restore()}
     else{mems.forEach(m=>beam(x,nodes[m.a],nodes[m.b],m.t,null,s));
-      if(drag){const t2=target(drag.x,drag.y,drag.from),ok=canPlace(t2,drag.from),f=nodes[drag.from];x.globalAlpha=.75;beam(x,f,{x:t2.x,y:t2.y},mat,null,s);x.globalAlpha=1;
+      if(drag&&drag.moved){const t2=target(drag.x,drag.y,drag.from),ok=canPlace(t2,drag.from),f=nodes[drag.from];x.globalAlpha=.75;beam(x,f,{x:t2.x,y:t2.y},mat,null,s);x.globalAlpha=1;
         x.strokeStyle=ok?'rgba(255,255,255,.5)':'rgba(255,107,94,.8)';x.lineWidth=1;x.beginPath();x.arc(sx(f.x),sy(f.y),MAXLEN*s,0,7);x.stroke();
         const len=Math.hypot(t2.x-f.x,t2.y-f.y);x.fillStyle=ok?'#fff':'#ff6b5e';x.font=`700 ${Math.max(11,s*.55)}px 'Saira Condensed',sans-serif`;x.textAlign='center';x.fillText('$'+Math.round(len*MAT[mat].price),sx(t2.x),sy(t2.y)-s*.6)}
       nodes.forEach(p=>joint(x,p,s));
+      if(!drag&&hover){const hi=nodeAt(hover.x,hover.y,PICK);if(hi>=0){const q=nodes[hi];x.strokeStyle='#ffb81c';x.lineWidth=Math.max(2,s*.1);x.beginPath();x.arc(sx(q.x),sy(q.y),s*.5,0,7);x.stroke()}}
+      if(drag&&drag.moved){const t2=target(drag.x,drag.y,drag.from);if(t2.i>=0){const q=nodes[t2.i];x.strokeStyle='#7fc36a';x.lineWidth=Math.max(2,s*.1);x.beginPath();x.arc(sx(q.x),sy(q.y),s*.5,0,7);x.stroke()}}
       x.save();x.globalAlpha=.55;x.scale(s,s);L.veh.slice(0,1).forEach(k=>{const Vv=VEH[k],y0=groundY(START_X)-Vv.r;drawCar(x,{k,V:Vv,wh:[{x:START_X-1,y:y0},{x:START_X-1+Vv.len,y:y0}]})});x.restore()}}
   /* ---------- loop ---------- */
   const pz=pauseMenu(el,{onRestart:()=>{if(mode==='test')stopSim();snapshot();nodes=nodes.slice(0,L.anchors.length);mems=[];persist();ui()}});
