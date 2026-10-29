@@ -580,7 +580,7 @@
   function wireEnd(){endEl.querySelectorAll('[data-a]').forEach(bb=>bb.addEventListener('click',()=>{const a=bb.dataset.a;if(a==='again'||a==='go')start();else toWorlds()}))}
   function start(){mode='play';P=null;chEl.hidden=true;moEl.hidden=false;ddEl.classList.remove('hot');selEl.hidden=true;endEl.hidden=true;bugEl.hidden=false;tickEl.hidden=true;
     G={q:1,conv:0,pend:null,untimed:0,furdKick:0,fog:0,snapsQ:0,chaosQ:0,used:[],played:null,cal:0,fur:0,clock:90,poss:'cal',los:25,fd:35,down:1,fl:75,ffd:65,fdn:1,mo:0,plays:0,hist:[],dhist:[],afterTD:null,fdShown:0,box:{cal:{yd:0,td:0,sk:0,pk:0},fur:{yd:0,td:0,sk:0,pk:0}},drives:[],drv:25,tds:0};
-    newSnap();stunt('CAL');flash('<span style="margin-right:1ch">THE</span><br>BIG GAME','CAL VS FURD',0,1.8,1);try{pcs[0].focus({preventScroll:true})}catch(_){}}
+    newSnap();stunt('CAL');flash('<span style="font-size:4.4cqw;text-shadow:.4cqw .4cqw 0 var(--tb),.8cqw .8cqw 0 #000">THE BIG GAME</span>','CAL VS FURD',0,1.8,1);try{pcs[0].focus({preventScroll:true})}catch(_){}}
   function toSplash(){mode='splash';G=null;S=null;P=null;A=null;chEl.hidden=true;moEl.hidden=false;p82Tag();selEl.hidden=false;endEl.hidden=true;bugEl.hidden=true;sheet.hidden=true;ban.hidden=true;cue.hidden=true;tickEl.hidden=true;rplB.hidden=true}
   /* ---------- input ---------- */
   function act(pos){if(mode!=='play'||!S)return;
@@ -626,8 +626,7 @@
       else{const h=holder();let fx=S.lastFx||S.L;if(S.ball.st==='air'||S.ball.st==='pitch')fx=lerp(S.ball.x0,S.ball.tx,S.ball.k);else if(h)fx=h.x;S.lastFx=fx;ct=S.def?fx-140:fx-100}}
     ct=Math.max(0,Math.min(WW-W,ct));cam=mode==='play'||(mode==='splash'&&A)?cam+(ct-cam)*.12:ct;
     x.save();if(shake>0)x.translate(Math.round((R()-.5)*3),Math.round((R()-.5)*3));field(t,dt);
-    if(mode==='splash'){if(A)atDraw(t);x.fillStyle=A?'rgba(0,10,20,.58)':'rgba(0,10,20,.74)';x.fillRect(0,FT,W,FB-FT);/* THE sits over the gap between BIG and GAME (x 108), which reads as centered; true center is 120 */
-      word(x,'THE',108,52,2,'#ffffff','#000');word(x,'BIG GAME',W/2,74,4,'#FDB515','#003262');
+    if(mode==='splash'){if(A)atDraw(t);x.fillStyle=A?'rgba(0,10,20,.58)':'rgba(0,10,20,.74)';x.fillRect(0,FT,W,FB-FT);word(x,'THE BIG GAME',W/2,66,3,'#FDB515','#003262');
       if(!A)for(let i=0;i<6;i++)guy(W/2-50+i*20,98,i%2?FUR:CAL,false,t,false)}
     if(mode!=='splash'&&S&&S.OA&&S.ph!=='half'){const lv=S.ph==='live',offC=S.def?FUR:CAL,defC=S.def?CAL:FUR,rp=S.ph==='replay';
       x.fillStyle='#6ab0ff';x.fillRect((S.L-cam)|0,FT,1,FB-FT);if(!S.def&&G.fd<100){x.fillStyle=Y;x.fillRect((wx(G.fd)-cam)|0,FT,1,FB-FT)}
