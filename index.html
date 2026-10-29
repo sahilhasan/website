@@ -440,7 +440,7 @@
   /* coming back with the browser's back button: restore the menu */
   addEventListener('pageshow',e=>{if(!e.persisted)return;ld.hidden=true;title.hidden=false;busy=false;renderList()});
   play.addEventListener('click',()=>go(sel));
-  function bookRows(){chEl.innerHTML='';WORLDS.forEach((w,i)=>{const d=document.createElement('div');d.innerHTML=`<b>${w.n}</b><small>${w.yr}</small><span>${w.d}</span>`;chEl.appendChild(d)})}
+  function bookRows(){chEl.innerHTML='';['ucb','cmu','dots'].map(k=>WORLDS.find(w=>w.k==k)).forEach(w=>{const d=document.createElement('div');d.innerHTML=`<b>${w.n}</b><small>${w.yr}</small><span>${w.d}</span>`;chEl.appendChild(d)})}
   function openBook(){bookRows();book.hidden=false;q('.hub-close').focus({preventScroll:true})}
   function closeBook(){book.hidden=true;q('.h-bk').focus({preventScroll:true})}
   q('.hub-bk').addEventListener('click',openBook);logo.addEventListener('click',openBook);q('.hub-close').addEventListener('click',closeBook);book.addEventListener('click',e=>{if(e.target===book)closeBook()});
