@@ -275,7 +275,9 @@
     [...moEl.children].forEach((p,i)=>p.classList.toggle('on',i<G.mo));moEl.classList.toggle('fire',G.mo>=5)}
   function pop(id){const n=$(id);n.classList.remove('pop');void n.offsetWidth;n.classList.add('pop')}
   const mom=d=>{G.mo=Math.max(0,Math.min(5,G.mo+d));if(G.mo>=5&&d>0)party=Math.max(party,1.2)};
-  function flash(h,s,bad,dur,big){ban.className='c67-ban'+(big?' big':'');ban.innerHTML=`<strong class="${bad===1?'bad':bad===2?'meh':''}">${h}</strong>${s?`<small>${s}</small>`:''}`;ban.hidden=false;
+  function flash(h,s,bad,dur,big){ban.className='c67-ban'+(big?' big':'');
+  /* center over the open field when the play cards cover one side */
+  const sh=!sheet.hidden;ban.style.left=sh&&sheet.classList.contains('l')?'37%':'';ban.style.right=sh&&sheet.classList.contains('r')?'37%':'';ban.innerHTML=`<strong class="${bad===1?'bad':bad===2?'meh':''}">${h}</strong>${s?`<small>${s}</small>`:''}`;ban.hidden=false;
     if(dur){clearTimeout(flash.t);flash.t=setTimeout(()=>{if(mode!=='play'||!S||S.ph!=='dead')ban.hidden=true},dur*1000)}}
   function cueOn(t){if(cuet.textContent!==t)cuet.textContent=t;cue.hidden=false}
   /* ---------- AI ---------- */
@@ -578,7 +580,7 @@
   function wireEnd(){endEl.querySelectorAll('[data-a]').forEach(bb=>bb.addEventListener('click',()=>{const a=bb.dataset.a;if(a==='again'||a==='go')start();else toWorlds()}))}
   function start(){mode='play';P=null;chEl.hidden=true;moEl.hidden=false;ddEl.classList.remove('hot');selEl.hidden=true;endEl.hidden=true;bugEl.hidden=false;tickEl.hidden=true;
     G={q:1,conv:0,pend:null,untimed:0,furdKick:0,fog:0,snapsQ:0,chaosQ:0,used:[],played:null,cal:0,fur:0,clock:90,poss:'cal',los:25,fd:35,down:1,fl:75,ffd:65,fdn:1,mo:0,plays:0,hist:[],dhist:[],afterTD:null,fdShown:0,box:{cal:{yd:0,td:0,sk:0,pk:0},fur:{yd:0,td:0,sk:0,pk:0}},drives:[],drv:25,tds:0};
-    newSnap();stunt('CAL');flash('THE BIG GAME','CAL VS FURD',0,1.8,1);try{pcs[0].focus({preventScroll:true})}catch(_){}}
+    newSnap();stunt('CAL');flash('THE<br>BIG GAME','CAL VS FURD',0,1.8,1);try{pcs[0].focus({preventScroll:true})}catch(_){}}
   function toSplash(){mode='splash';G=null;S=null;P=null;A=null;chEl.hidden=true;moEl.hidden=false;p82Tag();selEl.hidden=false;endEl.hidden=true;bugEl.hidden=true;sheet.hidden=true;ban.hidden=true;cue.hidden=true;tickEl.hidden=true;rplB.hidden=true}
   /* ---------- input ---------- */
   function act(pos){if(mode!=='play'||!S)return;
