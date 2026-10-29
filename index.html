@@ -417,7 +417,10 @@
       if(!set.has(c0+','+(y+1))){x.fillStyle='rgba(0,0,0,.22)';x.fillRect(X,Y+b-Math.max(1,b*.12),b,Math.max(1,b*.12))}})}
   drawLogo();new ResizeObserver(drawLogo).observe(logo);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitSpl());
-  (()=>{const g=q('.h-bk canvas').getContext('2d');g.fillStyle='#5a3417';g.fillRect(6,6,33,39);g.fillStyle='#8a5a2b';g.fillRect(9,6,30,36);g.fillStyle='#f1e3c2';g.fillRect(36,9,6,33);g.fillStyle='#212121';g.fillRect(14,13,19,19);drawMark(g,23.5,22.5,15,'#f5f543')})();
+  /* bio button: a Minecraft-style book, 16x16 pixels drawn at 3x */
+  (()=>{const g=q('.h-bk canvas').getContext('2d'),pal={D:'#2e1a0b',S:'#4a2a12',L:'#b07a3e',H:'#9a6532',B:'#7a4a22',P:'#f1e3c2',p:'#bfa97c'};
+    ['','.DDDDDDDDDDDD','.DSHHHHHHHHHDP','.DSHBBBBBBBBDPp','.DLHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DLHBBBBBBBBDPp','.DSHBBBBBBBBDPp','.DDDDDDDDDDDDPp','..PPPPPPPPPPPPp','...pppppppppppp']
+      .forEach((r,j)=>[...r].forEach((c,i)=>{if(pal[c]){g.fillStyle=pal[c];g.fillRect(i*3,j*3,3,3)}}))})();
 
   /* ---------- menu ---------- */
   function renderList(){list.innerHTML='';WORLDS.forEach((w,i)=>{const b=document.createElement('button');b.type='button';b.className='h-w'+(i==sel?' sel':'');b.setAttribute('role','option');b.setAttribute('aria-selected',String(i==sel));
