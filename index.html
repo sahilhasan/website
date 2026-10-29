@@ -378,7 +378,12 @@
     {k:'ucb',vk:'cal',href:'cal/',n:'UC Berkeley',d:'B.S. EECS',load:'Lining the field',
      ic:g=>{g.fillStyle='#4c9a3a';g.fillRect(0,0,16,16);g.fillStyle='#003262';g.fillRect(0,0,3,16);g.fillStyle='#fdb515';g.fillRect(13,0,3,16);g.fillStyle='#f4f4ee';g.fillRect(6,0,1,16);g.fillRect(10,0,1,16);g.fillStyle='#8a4b1f';g.fillRect(7,7,3,2)}},
     {k:'cmu',vk:'pgh',href:'pittsburgh/',n:'Carnegie Mellon',d:'M.S. Computer Science',load:'Spanning the rivers',
-     ic:g=>{g.fillStyle='#5a9a4a';g.fillRect(0,0,16,16);g.fillStyle='#2e6ec4';g.fillRect(0,6,6,4);g.fillRect(5,2,11,4);g.fillRect(5,10,11,4);g.fillStyle='#ffb81c';g.fillRect(9,1,2,6);g.fillRect(11,9,2,6);g.fillStyle='#c41230';g.fillRect(12,7,4,2)}}];
+     /* one of the yellow Three Sisters suspension bridges */
+     ic:g=>{const P=(c,x,y,w=1,h=1)=>{g.fillStyle=c;g.fillRect(x,y,w,h)},Y='#ffb81c',D='#e09a00';
+       P('#8ec5f2',0,0,16,9);P('#2e6ec4',0,9,16,7);[[1,11],[9,13],[5,14],[12,10]].forEach(([x,y])=>P('#6aa2ea',x,y,2,1));
+       for(let x=3;x<=12;x++){const y=Math.round(6.2-4.2*((x-7.5)/5)**2);P(Y,x,y);if(x%2==0&&x>3&&x<12)P(D,x,y+1,1,7-y)}
+       for(let x=0;x<3;x++)P(Y,x,2+Math.round((2.5-x)*1.6));for(let x=13;x<16;x++)P(Y,x,2+Math.round((x-12.5)*1.6));
+       P(D,2,1,1,12);P(D,13,1,1,12);P(Y,2,1);P(Y,13,1);P(Y,0,8,16,1);P('#3b3f45',0,9,16,1)}}];
 
   const now=q('.p-now'),old=q('.p-old'),list=q('.h-list'),ld=q('.h-load'),book=q('.h-book'),play=q('.hub-play'),chEl=q('.hub-ch'),title=q('.h-title'),logo=q('.h-logo');
   const SK='shasan.hub.sel';let sel=((store.get(SK,0)|0)%3+3)%3,busy=false;
