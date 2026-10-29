@@ -69,13 +69,12 @@
 .s67 .c67-tick b.f{background:var(--rd)}
 .s67 .c67-rpl{position:absolute;right:2.5%;bottom:8.5%;font-size:2.2cqw;line-height:1.3;color:#fff;background:#c0392b;border:0;padding:1.1cqw 1.5cqw;box-shadow:0 .6cqw 0 #000;cursor:pointer}
 .s67 .c67-sel{position:absolute;inset:0;cursor:default}
-.s67 .c67-who{position:absolute;left:2.4cqw;top:28%;line-height:1.6;background:rgba(0,10,20,.78);padding:.6cqw 1.2cqw}
-.s67 .c67-who b{display:block;font-weight:400;font-size:2.6cqw;text-shadow:.4cqw .4cqw 0 #000}
-.s67 .c67-who span{font-size:2cqw;color:#f5f543;text-shadow:.3cqw .3cqw 0 #000}
 .s67 .c67-wld{position:absolute;right:3cqw;top:28.5%;font-size:2.2cqw;line-height:1.4;color:var(--tf);background:var(--tb);border:0;outline:.35cqw solid var(--tf);outline-offset:-.35cqw;padding:1.1cqw 1.5cqw;box-shadow:0 .6cqw 0 #000;cursor:pointer}
 .s67 .c67-mid{position:absolute;left:0;right:0;bottom:8%;display:grid;justify-items:center;gap:1.8cqw}
 .s67 .c67-go{font-size:3cqw;line-height:1.3;color:var(--tb);background:var(--tf);border:0;padding:1.6cqw 3cqw;cursor:pointer;box-shadow:0 .7cqw 0 #000}
 .s67 .c67-mid small{font-size:2cqw;color:#cfd8e3;text-shadow:.3cqw .3cqw 0 #000}
+.s67 .c67-mid small[hidden]{display:none}
+.s67 .c67-mid #c67-rec{color:var(--tf)}
 .s67 .c67-end{position:absolute;inset:0;display:grid;place-items:end center;padding-bottom:2.2cqw;background:linear-gradient(rgba(0,10,20,0) 0,rgba(0,10,20,0) 26%,rgba(0,10,20,.8) 32%);cursor:default}
 .s67 .c67-box{width:88%;background:#001a33;border:.5cqw solid var(--tf);box-shadow:1cqw 1cqw 0 #000;padding:1.8cqw 2.2cqw;text-align:center;display:grid;gap:1cqw}
 .s67 .c67-top{display:flex;align-items:center;justify-content:center;gap:2.4cqw}
@@ -126,8 +125,7 @@
     <button type="button" class="c67-rpl" id="c67-rpl" hidden>REPLAY</button>
     <div class="c67-tick" id="c67-tick" hidden></div>
     <div class="c67-sel" id="c67-sel">
-      <div class="c67-who"><b>SAHIL HASAN</b><span>Founder and CEO @ Dots</span></div>
-      <div class="c67-mid"><button type="button" class="c67-go" id="c67-go">KICK OFF</button><small>THE BIG GAME &middot; THE AXE IS ON THE LINE</small><small>BEST <span id="c67-sb">0</span> &middot; W <span id="c67-sw">0</span><span id="c67-p82s"></span></small></div>
+      <div class="c67-mid"><button type="button" class="c67-go" id="c67-go">KICK OFF</button><small>THE AXE IS ON THE LINE</small><small id="c67-rec" hidden></small></div>
     </div>
     <div class="c67-end" id="c67-end" hidden></div>
   </div>
@@ -227,7 +225,7 @@
     const mx=MIDX-cam;if(mode!=='splash'&&!(S&&S.ph==='half')&&mx>-45&&mx<W+45)word(x,'CAL',mx,(FT+FB)/2,3,'#FDB515','#003262');x.fillStyle='#1d4f1a';x.fillRect(0,FB+1,W,H-FB)}
   const fmt=s=>`${Math.floor(Math.max(0,s)/60)}:${String(Math.max(0,Math.floor(s%60))).padStart(2,'0')}`;
   const yardText=y=>{y=Math.round(y);return y===50?'50':y<50?'CAL '+Math.max(1,y):'FURD '+Math.max(1,100-y)};
-  let best=+store.get('shasan.cal.best',0)||0,wins=+store.get('shasan.cal.w',0)||0;$('sb').textContent=best;$('sw').textContent=wins;
+  let best=+store.get('shasan.cal.best',0)||0,wins=+store.get('shasan.cal.w',0)||0;
   const toWorlds=()=>{location.href=WORLDS_URL};
   let mode='splash',G=null,S=null,cam=MIDX-W*.5,conf=[],party=0,shake=0;
   /* ---------- sim helpers ---------- */
@@ -569,7 +567,7 @@
     if(G.q===4&&G.clock<=35&&!G.fdShown){G.fdShown=1;newSnap();flash('FINAL DRIVE','',0,1.1,1);stunt('GO BEARS');return}newSnap()}
   function startReplay(){if(!S||S.ph!=='dead'||!S.fr.length)return;rplB.hidden=true;ban.hidden=true;S.rp={i:Math.max(0,S.fr.length-80)};S.ph='replay'}
   function final(){mode='over';G.clock=0;hud();ddEl.innerHTML='FINAL';ddEl.classList.remove('hot');sheet.hidden=true;cue.hidden=true;ban.hidden=true;rplB.hidden=true;if(G.poss==='cal')endDrive('END');
-    const win=G.cal>G.fur,tie=G.cal===G.fur;if(win){wins++;store.set('shasan.cal.w',wins)}const nb=G.cal>best;if(nb){best=G.cal;store.set('shasan.cal.best',best)}$('sb').textContent=best;$('sw').textContent=wins;
+    const win=G.cal>G.fur,tie=G.cal===G.fur;if(win){wins++;store.set('shasan.cal.w',wins)}const nb=G.cal>best;if(nb){best=G.cal;store.set('shasan.cal.best',best)}
     if(win){celebrate(['#FDB515','#003262','#fff']);stunt(dotsUsed?'GO BEARS':'DOTS');dotsUsed=true}
     const b=G.box,row=(n,o)=>`<tr><td>${n}</td><td>${o.yd}</td><td>${o.td}</td><td>${o.sk}</td><td>${o.pk}</td></tr>`;
     const gp=G.played,pl=gp?`<p>${gp.win?(gp.five?'THE PLAY. ':'RETURN TD. '):'THE PLAY FELL SHORT. '}${p8Pl(gp.lat,'LATERAL')}.</p>`:'';
@@ -623,8 +621,8 @@
       else{const h=holder();let fx=S.lastFx||S.L;if(S.ball.st==='air'||S.ball.st==='pitch')fx=lerp(S.ball.x0,S.ball.tx,S.ball.k);else if(h)fx=h.x;S.lastFx=fx;ct=S.def?fx-140:fx-100}}
     ct=Math.max(0,Math.min(WW-W,ct));cam=mode==='play'?cam+(ct-cam)*.12:ct;
     x.save();if(shake>0)x.translate(Math.round((R()-.5)*3),Math.round((R()-.5)*3));field(t,dt);
-    if(mode==='splash'){x.fillStyle='rgba(0,10,20,.74)';x.fillRect(0,FT,W,FB-FT);word(x,'CAL',W/2-62,80,4,'#FDB515','#003262');word(x,'VS',W/2-4,82,2,'#ffffff','#000');word(x,'FURD',W/2+62,80,4,'#f2f2f2','#5a0d0d');
-      for(let i=0;i<6;i++){const gx=W/2-50+i*20,gy=104+Math.sin(t*3+i)*1.5;guy(gx,gy,i%2?FUR:CAL,false,t,!RM)}}
+    if(mode==='splash'){x.fillStyle='rgba(0,10,20,.74)';x.fillRect(0,FT,W,FB-FT);word(x,'CAL',W/2-62,66,4,'#FDB515','#003262');word(x,'VS',W/2-4,68,2,'#ffffff','#000');word(x,'FURD',W/2+62,66,4,'#f2f2f2','#5a0d0d');
+      for(let i=0;i<6;i++){const gx=W/2-50+i*20,gy=90+Math.sin(t*3+i)*1.5;guy(gx,gy,i%2?FUR:CAL,false,t,!RM)}}
     if(mode!=='splash'&&S&&S.OA&&S.ph!=='half'){const lv=S.ph==='live',offC=S.def?FUR:CAL,defC=S.def?CAL:FUR,rp=S.ph==='replay';
       x.fillStyle='#6ab0ff';x.fillRect((S.L-cam)|0,FT,1,FB-FT);if(!S.def&&G.fd<100){x.fillStyle=Y;x.fillRect((wx(G.fd)-cam)|0,FT,1,FB-FT)}
       if(!rp&&S.ph!=='call'&&S.ph!=='reveal'){const tc=S.def?'rgba(255,155,145,.55)':'rgba(253,181,21,.6)';S.OA.forEach(o=>o.tr.forEach(([a,b],i)=>{if(i%2)return;x.fillStyle=tc;x.fillRect((a-cam)|0,(b+2)|0,1,1)}))}
@@ -663,7 +661,9 @@
   let p82Done=!!store.get('shasan.cal.play1982',false);
   const BAND=['#8C1515','#f2f2f2'],BRASS='#e8c04a',LAT_R=80,SLOT=[[-11,-15],[-11,15],[-20,-28],[-20,28],[-26,0]];
   const p8Pl=(n,w)=>`${n} ${w}${n===1?'':'S'}`;
-  function p82Tag(){const s=$('p82s');if(s)s.innerHTML=p82Done?' &middot; THE PLAY DONE':''}
+  /* title-screen record: only shows once there is something to show */
+  function p82Tag(){const s=$('rec');if(!s)return;const bits=[];if(best)bits.push('BEST '+best);if(wins)bits.push(wins+(wins>1?' WINS':' WIN'));if(p82Done)bits.push('RAN THE PLAY');s.innerHTML=bits.join(' &middot; ');s.hidden=!bits.length}
+  p82Tag();
   function p8Go(ph){P.ph=ph;P.t=0}
   function p82Start(){mode='p82';S=null;chEl.hidden=true;selEl.hidden=true;endEl.hidden=true;sheet.hidden=true;tickEl.hidden=true;rplB.hidden=true;cue.hidden=true;ban.hidden=true;
     bugEl.hidden=false;moEl.hidden=true;conf=[];party=0;
