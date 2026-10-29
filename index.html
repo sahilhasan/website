@@ -59,11 +59,10 @@
 .s66 .h-page h3{margin:0;font-weight:400;font-family:'Press Start 2P',monospace;font-size:2.3cqw;color:#2a1d0e}
 .s66 .h-t2{color:#7a4b12;margin-top:-.4cqw}
 .s66 .h-ch{display:grid;gap:.6cqw;border-block:.25cqw dashed #b8955c;padding-block:.8cqw}
-.s66 .h-ch div{display:grid;grid-template-columns:1fr auto;gap:1cqw;align-items:center}
+.s66 .h-ch div{display:grid;grid-template-columns:1fr auto;column-gap:1cqw;align-items:baseline}
+.s66 .h-ch small{color:#8a6a3a;font-size:2cqw}
 .s66 .h-ch b{font-weight:400;display:block}
-.s66 .h-ch b svg{width:1.1em;height:1.1em;vertical-align:-.15em;margin-right:.35em;color:#212121}
-.s66 .h-ch span{color:#6a5232;font-size:2.1cqw}
-.s66 .h-pl{font:400 2.2cqw 'VT323',monospace;background:#3a7a3a;color:#fff;border:.25cqw solid #1f3f1f;padding:.25cqw 1.1cqw;cursor:pointer}
+.s66 .h-ch span{grid-column:1/-1;color:#6a5232;font-size:2.1cqw}
 .s66 .h-lk{display:block;text-align:center;text-decoration:none;color:#fff;font-size:2.4cqw;padding:.6cqw 0;border:.3cqw solid #000;background:#2b5f9e}
 .s66 .h-rs{justify-self:start;font:400 2cqw 'VT323',monospace;color:#7a4b12;background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
 .s66 .h-x{position:absolute;right:1cqw;top:.8cqw;font:400 2.6cqw 'VT323',monospace;background:#7a4b12;color:#f1e3c2;border:0;width:3.4cqw;height:3.4cqw;cursor:pointer}
@@ -84,8 +83,7 @@
   .s66 .h-btn{font-size:3.6cqw}
   .s66 .h-page{width:88cqw;max-height:58cqw;font-size:3.2cqw;padding:2.4cqw 3cqw}
   .s66 .h-page h3{font-size:3.2cqw}
-  .s66 .h-ch span{font-size:2.9cqw}
-  .s66 .h-pl{font-size:3.1cqw}
+  .s66 .h-ch span,.s66 .h-ch small{font-size:2.9cqw}
   .s66 .h-lk{font-size:3.2cqw}
   .s66 .h-rs{font-size:3cqw}
   .s66 .h-x{width:5cqw;height:5cqw;font-size:3.4cqw}
@@ -110,8 +108,7 @@
   .s66 .h-pb{width:70cqw;height:2.6cqw}
   .s66 .h-page{width:90cqw;max-height:80vh;max-height:80dvh;font-size:4.6cqw;gap:2.4cqw;padding:5cqw 5cqw}
   .s66 .h-page h3{font-size:4.6cqw}
-  .s66 .h-ch span{font-size:4cqw}
-  .s66 .h-pl{font-size:4.6cqw;padding:.6cqw 2.4cqw}
+  .s66 .h-ch span,.s66 .h-ch small{font-size:4cqw}
   .s66 .h-lk{font-size:4.8cqw;padding:2cqw 0}
   .s66 .h-rs{font-size:4.2cqw}
   .s66 .h-x{width:8cqw;height:8cqw;font-size:5.4cqw;right:2cqw;top:2cqw}
@@ -135,7 +132,7 @@
       <div class="h-book" hidden role="dialog" aria-modal="true" aria-label="Bio">
         <div class="h-page">
           <button type="button" class="h-x hub-close" aria-label="Close">X</button>
-          <h3>SAHIL HASAN</h3><div class="h-t2">Founder and CEO @ Dots</div>
+          <h3>SAHIL HASAN</h3><div class="h-t2">Founder and CEO of Dots</div>
           <div class="h-ch hub-ch"></div>
           <a class="h-lk" href="https://www.linkedin.com/in/sahilhasan" target="_blank" rel="noopener">LinkedIn</a>
           <button type="button" class="h-rs hub-reset">Reset worlds</button>
@@ -373,11 +370,11 @@
 
   /* ---------- worlds (order: Dots first) ---------- */
   const WORLDS=[
-    {k:'dots',vk:'dots',href:'dots/',n:'Dots',d:'Founder and CEO, with co-founder Kartikye Mittal',load:'Raising HQ',
+    {k:'dots',vk:'dots',href:'dots/',n:'Dots',d:'Co-founded with Kartikye Mittal',yr:'Now',load:'Raising HQ',
      hi:1,ic:g=>{g.fillStyle='#212121';g.fillRect(0,0,64,64);drawMark(g,32,32,46,'#f5f543')}},
-    {k:'ucb',vk:'cal',href:'cal/',n:'UC Berkeley',d:'B.S. EECS',load:'Lining the field',
+    {k:'ucb',vk:'cal',href:'cal/',n:'UC Berkeley',d:'B.S. EECS',yr:'2015–2018',load:'Lining the field',
      ic:g=>{g.fillStyle='#4c9a3a';g.fillRect(0,0,16,16);g.fillStyle='#003262';g.fillRect(0,0,3,16);g.fillStyle='#fdb515';g.fillRect(13,0,3,16);g.fillStyle='#f4f4ee';g.fillRect(6,0,1,16);g.fillRect(10,0,1,16);g.fillStyle='#8a4b1f';g.fillRect(7,7,3,2)}},
-    {k:'cmu',vk:'pgh',href:'pittsburgh/',n:'Carnegie Mellon',d:'M.S. Computer Science',load:'Spanning the rivers',
+    {k:'cmu',vk:'pgh',href:'pittsburgh/',n:'Carnegie Mellon',d:'M.S. Computer Science',yr:'2018–2019',load:'Spanning the rivers',
      /* one of the yellow Three Sisters suspension bridges */
      ic:g=>{const P=(c,x,y,w=1,h=1)=>{g.fillStyle=c;g.fillRect(x,y,w,h)},Y='#ffb81c',D='#e09a00';
        P('#8ec5f2',0,0,16,9);P('#2e6ec4',0,9,16,7);[[1,11],[9,13],[5,14],[12,10]].forEach(([x,y])=>P('#6aa2ea',x,y,2,1));
@@ -443,8 +440,7 @@
   /* coming back with the browser's back button: restore the menu */
   addEventListener('pageshow',e=>{if(!e.persisted)return;ld.hidden=true;title.hidden=false;busy=false;renderList()});
   play.addEventListener('click',()=>go(sel));
-  function bookRows(){chEl.innerHTML='';WORLDS.forEach((w,i)=>{const d=document.createElement('div');d.innerHTML=`<span><b>${w.k=='dots'?markSVG(''):''}${w.n}</b>${w.d}</span>`;
-      const b=document.createElement('button');b.type='button';b.className='h-pl';b.textContent='Play';b.addEventListener('click',()=>go(i));d.appendChild(b);chEl.appendChild(d)})}
+  function bookRows(){chEl.innerHTML='';WORLDS.forEach((w,i)=>{const d=document.createElement('div');d.innerHTML=`<b>${w.n}</b><small>${w.yr}</small><span>${w.d}</span>`;chEl.appendChild(d)})}
   function openBook(){bookRows();book.hidden=false;q('.hub-close').focus({preventScroll:true})}
   function closeBook(){book.hidden=true;q('.h-bk').focus({preventScroll:true})}
   q('.hub-bk').addEventListener('click',openBook);logo.addEventListener('click',openBook);q('.hub-close').addEventListener('click',closeBook);book.addEventListener('click',e=>{if(e.target===book)closeBook()});
