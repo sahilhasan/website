@@ -195,6 +195,11 @@
   tex.glass=T(tx(g=>{nz(g,[44,58,82],10);g.fillStyle='rgba(150,180,215,.45)';for(let i=0;i<16;i+=4)g.fillRect(i,0,1,16);g.fillStyle='rgba(200,225,250,.35)';g.fillRect(0,0,16,1);g.fillRect(0,8,16,1)}),
               tx(g=>{nz(g,[22,26,40],8);for(let y=1;y<16;y+=4)for(let i=1;i<16;i+=4){g.fillStyle=R0()<.6?'rgb(255,226,150)':'rgb(40,44,60)';g.fillRect(i,y,2,2)}}));
   tex.orange=T(tx(g=>{nz(g,[192,54,44],14);g.fillStyle='rgba(90,20,15,.5)';g.fillRect(0,15,16,1)}),tx(g=>{nz(g,[150,40,36],10);g.fillStyle='rgb(255,210,140)';g.fillRect(7,2,2,2)}));
+  tex.corr=T(tx(g=>{nz(g,[50,52,58],8);g.fillStyle='rgba(120,124,136,.45)';for(let i=0;i<16;i+=2)g.fillRect(i,0,1,16);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,15,16,1)}));
+  tex.fwin=T(tx(g=>{g.fillStyle='#2a2c32';g.fillRect(0,0,16,16);g.fillStyle='#9cc4e4';g.fillRect(1,3,6,10);g.fillRect(9,3,6,10);g.fillStyle='#c6e0f2';g.fillRect(1,3,6,2);g.fillRect(9,3,6,2)}));
+  tex.chestTop=T(tx(g=>{nz(g,[160,110,52],16);g.strokeStyle='#4a2c10';g.lineWidth=1;g.strokeRect(.5,.5,15,15);g.fillStyle='rgba(90,55,20,.5)';g.fillRect(1,7,14,1)}));
+  tex.chest=T(tx(g=>{nz(g,[150,102,48],16);g.strokeStyle='#4a2c10';g.lineWidth=1;g.strokeRect(.5,.5,15,15);g.fillStyle='#3a220c';g.fillRect(1,5,14,1);g.fillStyle='#d8d8d8';g.fillRect(7,4,2,4)}));
+  const BELT=[0,1,2,3].map(k=>T(tx(g=>{nz(g,[58,58,62],8);g.fillStyle='#2a2a2e';g.fillRect(0,0,16,2);g.fillRect(0,14,16,2);g.fillStyle='rgba(245,245,67,.85)';for(let i=k*-4;i<16;i+=8){g.fillRect(i+4,3,2,10)}})));
   tex.lamp=T(tx(g=>{nz(g,[255,236,150],10);frame(g,'rgba(120,100,40,.8)')}),tx(g=>{nz(g,[255,240,170],6);frame(g,'rgba(160,130,60,.8)')}));
   /* Dots mark on HQ faces: real vector path rasterized onto a 5x5-block (80x80 texel) face, sliced per block */
   const MARKT=(()=>{const k=document.createElement('canvas');k.width=k.height=80;const g=k.getContext('2d');g.fillStyle='#232326';g.fillRect(0,0,80,80);
@@ -205,7 +210,7 @@
     g.putImageData(new ImageData(d,80,80),0,0);
     const out=[];for(let r=0;r<5;r++)for(let c=0;c<5;c++){const t=document.createElement('canvas');t.width=t.height=16;t.getContext('2d').drawImage(k,c*16,r*16,16,16,0,0,16,16);out.push(t)}return out})();
   const WATER=[0,1,2].map(k=>T(tx(g=>{nz(g,[46,110,196],12);g.fillStyle='rgba(205,232,255,.55)';for(let j=0;j<4;j++)g.fillRect((j*5+k*3)%12,(j*4+k)%16,4,1)})));
-  let WF=0;
+  let WF=0,WF2=0;
 
   /* ---------- materials: top texture + side texture by block row ---------- */
   const MD=[];
@@ -234,7 +239,11 @@
   MD[24]={top:tex.lamp,side:(z,g)=>z>=g-1?tex.lamp:tex.ink};
   MD[25]={top:tex.orange,side:()=>tex.orange};
   const MKT=MARKT.map(k=>T(k));let HQX=0,HQY=0;
-  MD[20]={top:tex.yel,side:(z,g,mx,my,sd)=>{if(z>=g-1)return tex.yel;if(sd===0&&mx===HQX&&my-HQY===2&&z<7)return tex.door;const r=g-9-z;if(r>=0&&r<5){const c=sd===0?my-HQY:mx-HQX;if(c>=0&&c<5)return MKT[r*5+c]}if(z<7)return tex.glass;return z%2?tex.win:tex.ink}};
+  MD[20]={top:tex.steel,side:(z,g,mx,my,sd)=>{if(z>=14)return tex.glass;if(z===13)return tex.yel;if(sd===0&&mx===HQX&&my-HQY===2&&z<7)return tex.door;if(z<7)return tex.glass;
+    const r=12-z,c=my-HQY;if(sd===0&&r>=0&&r<5&&c>=0&&c<5)return MKT[r*5+c];return z===7||z===10?tex.fwin:tex.corr}};
+  MD[29]={top:tex.ink,side:(z,g)=>z>=g-3?(z%2?tex.orange:tex.quartz):tex.brick};
+  MD[30]={top:tex.chestTop,side:()=>tex.chest};
+  MD[31]={get top(){return BELT[(WF2|0)%4]},side:()=>tex.ink};
 
   /* ---------- heightmap worlds ---------- */
   const N=128;
@@ -253,19 +262,24 @@
 
   function buildDots(){const s=mk({}),n=VN(11),r=rng(91),hx=78,hy=61;
     for(let y=0;y<N;y++)for(let x=0;x<N;x++){const k=I(x,y);let h=3+Math.round((n(x,y,.045)*.75+n(x+50,y+30,.13)*.25)*6);
-      const dH=Math.hypot(x-hx-2,y-hy-2),dC=Math.hypot(x-64,y-64),lake=n(x+300,y+300,.035);
-      if(dH<10)h=5;if(dC<5)h=Math.max(h,5);s.G[k]=h;s.M[k]=1;
-      if(lake<.3&&dH>11&&dC>7){s.G[k]=3;s.M[k]=3}else if(lake<.345&&dH>11&&dC>7){s.M[k]=2}}
+      const dH=Math.hypot(x-hx-4,y-hy-2),dC=Math.hypot(x-64,y-64),lake=n(x+300,y+300,.035);
+      if(dH<14)h=5;if(dC<5)h=Math.max(h,5);s.G[k]=h;s.M[k]=1;
+      if(lake<.3&&dH>15&&dC>7){s.G[k]=3;s.M[k]=3}else if(lake<.345&&dH>15&&dC>7){s.M[k]=2}}
     for(let x=65;x<hx;x++)for(let y=hy+1;y<=hy+3;y++){s.G[I(x,y)]=5;s.M[I(x,y)]=16}
     for(let y=hy-1;y<=hy+5;y++)for(let x=59;x<hx;x++){const k=I(x,y);if(s.M[k]==3)continue;if(s.G[k]>5)s.G[k]=5;if(y>=hy+1&&y<=hy+3){s.G[k]=5;s.M[k]=16}}
-    box(s,hx,hy,5,5,23,20);box(s,hx+1,hy+1,3,3,26,23);box(s,hx+2,hy+2,1,1,30,19);HQX=hx;HQY=hy;
+    /* the Dots factory: a long hall with the logo over the door, a sawtooth roof, two smokestacks */
+    for(let y=hy-3;y<hy+8;y++)for(let x=hx;x<hx+10;x++){const k=I(x,y);s.G[k]=14+((y-hy+3)%3);s.M[k]=20}HQX=hx;HQY=hy;
+    box(s,hx+7,hy-2,1,1,19,29);box(s,hx+7,hy+6,1,1,19,29);s.smoke=[[hx+7.5,hy-1.5,19],[hx+7.5,hy+6.5,19]];
+    /* conveyor belts: paper goes in on the right, yellow dots come out on the left into a chest */
+    for(const y of [hy-2,hy+6])for(let x=hx-12;x<hx;x++){const k=I(x,y);s.G[k]=x===hx-12?6:6;s.M[k]=x===hx-12?30:31;for(const d of[-1,1]){const k2=I(x,y+d);if(s.M[k2]===3||s.G[k2]!==5){s.G[k2]=5;s.M[k2]=1}}}
+    s.items=[{x0:hx-.3,x1:hx-11.5,y:hy-1.5,z:6,col:'#f5f543',dk:'#a3a31c',n:6,sp:1.1},{x0:hx-11.5,x1:hx-.3,y:hy+6.5,z:6,col:'#f2f2f2',dk:'#b5b5b5',n:5,sp:.9}];
     /* lamps along the path to the door */
     s.lamps=[];for(let x=66;x<hx-1;x+=3)for(const y of [hy+.6,hy+4.4])s.lamps.push({x:x+.5,y});
     s.founders=[{x:hx-1.6,y:hy+1.75,who:'s'},{x:hx-1.5,y:hy+3.35,who:'k'}];
-    for(let t=0;t<170;t++){const x=4+(r()*120|0),y=4+(r()*120|0),k=I(x,y);if(s.M[k]!=1||Math.hypot(x-64,y-64)<12||Math.hypot(x-hx-2,y-hy-2)<9||s.SM[k])continue;tree(s,x,y,4+(r()*2|0),6)}
+    for(let t=0;t<170;t++){const x=4+(r()*120|0),y=4+(r()*120|0),k=I(x,y);if(s.M[k]!=1||Math.hypot(x-64,y-64)<12||Math.hypot(x-hx-4,y-hy-2)<15||s.SM[k])continue;tree(s,x,y,4+(r()*2|0),6)}
     s.cam={x:58.5,y:64.5,z:s.G[I(58,64)]+6.2,hor:.45};
     s.sky=sky([92,140,226],[150,192,240],[200,224,248]);s.fog=[200,224,248];s.tint=[1,1,1];
-    s.sun={a:2.2,e:.42,s:6,col:[255,252,220]};s.clouds=[255,255,255];s.beam={x:hx+2.5,y:hy+2.5,z:30};s.birds=5;herd(s,7,17,['sheep','pig','cow'],Math.atan2(hy+2.5-s.cam.y,hx+2.5-s.cam.x)-.75);return s}
+    s.sun={a:2.2,e:.42,s:6,col:[255,252,220]};s.clouds=[255,255,255];s.birds=5;herd(s,7,17,['sheep','pig','cow'],Math.atan2(hy+2.5-s.cam.y,hx+2.5-s.cam.x)-.75);return s}
 
   function buildUCB(){const s=mk({}),n=VN(23),r=rng(37);
     for(let y=0;y<N;y++)for(let x=0;x<N;x++){const k=I(x,y);
@@ -372,7 +386,7 @@
     const fogF=p=>{const v=(p-FOG0)/(MAXD-FOG0);return v<0?0:v>1?1:v};
     function px(mi,t,ti,br,fo,dp){zb[mi]=dp;let c,lit=night&&t.lit,r,g,b;if(lit){c=t.lit[ti];r=(c&255)*.96;g=(c>>8&255)*.96;b=(c>>16&255)*.96;fo*=.55}else{c=t.a[ti];r=(c&255)*br*tr;g=(c>>8&255)*br*tg;b=(c>>16&255)*br*tb}
       r+=(fr-r)*fo;g+=(fgc-g)*fo;b+=(fb-b)*fo;buf[mi]=(255<<24|(b>255?255:b|0)<<16|(g>255?255:g|0)<<8|(r>255?255:r|0))>>>0;mask[mi]=1}
-    function render(s,yaw,t){MAXD=s.maxd||60;FOG0=s.fog0||16;const cx=s.cam.x,cy=s.cam.y,cz=s.cam.z,hor=H*(s.cam.hor+HORADJ),f=FOC;[tr,tg,tb]=s.tint;[fr,fgc,fb]=s.fog;night=!!s.night;WF=Math.floor(t*3)%3;
+    function render(s,yaw,t){MAXD=s.maxd||60;FOG0=s.fog0||16;const cx=s.cam.x,cy=s.cam.y,cz=s.cam.z,hor=H*(s.cam.hor+HORADJ),f=FOC;[tr,tg,tb]=s.tint;[fr,fgc,fb]=s.fog;night=!!s.night;WF=Math.floor(t*3)%3;WF2=RM?0:Math.floor(t*8)%4;
       const sk=H+':'+HORADJ;if(s._skyH!==sk){s._skyA=skyArr(s.sky,hor);s._skyH=sk}const sa=s._skyA;
       mask.fill(0);const G=s.G,Mm=s.M,S0=s.S0,S1=s.S1,SM=s.SM,wtop=WATER[WF];
       for(let i=0;i<W;i++){const ra=yaw+Math.atan((i-W/2)/f),dx=Math.cos(ra),dy=Math.sin(ra),ct=Math.cos(ra-yaw);
@@ -428,6 +442,14 @@
           if(fo>0){const r0=c&255,g0=c>>8&255,b0=c>>16&255;c=(255<<24|((b0+(fb-b0)*fo)|0)<<16|((g0+(fgc-g0)*fo)|0)<<8|((r0+(fr-r0)*fo)|0))>>>0}
           if(night){const r0=(c&255)*.35,g0=(c>>8&255)*.36,b0=(c>>16&255)*.55;c=(255<<24|(b0|0)<<16|(g0|0)<<8|(r0|0))>>>0}
           fillD(X+(i2-sw/2)*p,yf-(sh-j)*p,p+.5,p+.5,c,dist)}})}
+      /* factory smoke: square puffs rising and drifting off the stacks */
+      const fillDA=(x0,y0,w,h,c,a,dp)=>{const xa=Math.max(0,x0|0),xb=Math.min(W-1,(x0+w)|0),ya=Math.max(0,y0|0),yb=Math.min(H-1,(y0+h)|0);for(let yy=ya;yy<=yb;yy++)for(let xx=xa;xx<=xb;xx++){const mi=yy*W+xx;if(mask[mi]&&zb[mi]<dp)continue;const o=buf[mi],r0=o&255,g0=o>>8&255,b0=o>>16&255;buf[mi]=(255<<24|((b0+(c[2]-b0)*a)|0)<<16|((g0+(c[1]-g0)*a)|0)<<8|((r0+(c[0]-r0)*a)|0))>>>0}};
+      const proj=(px2,py2)=>{const ang=Math.atan2(py2-cy,px2-cx),rel=wrap(ang-yaw);if(Math.abs(rel)>hfov()/2+.2)return null;const d=Math.hypot(px2-cx,py2-cy)*Math.cos(rel);return d<1?null:{X:W/2+Math.tan(rel)*f,d}};
+      if(s.smoke)for(const[sx2,sy2,sz]of s.smoke)for(let k=0;k<8;k++){const a=((RM?0:t)*.22+k/8)%1,q=proj(sx2+a*1.2,sy2-a*5);if(!q)continue;const sz2=(.5+a*1.4)*f/q.d,Y=hor-(sz+.4+a*3.4-cz)*f/q.d;
+        fillDA(q.X-sz2/2,Y-sz2/2,sz2,sz2,[226,226,230],(1-a)*.7,q.d)}
+      /* things riding the conveyor belts */
+      if(s.items)for(const b of s.items){const L=Math.abs(b.x1-b.x0);for(let k=0;k<b.n;k++){const u=(((RM?0:t)*b.sp/L)+k/b.n)%1,q=proj(b.x0+(b.x1-b.x0)*u,b.y);if(!q)continue;const w=.42*f/q.d,Y=hor-(b.z-cz)*f/q.d;
+        fillD(q.X-w/2,Y-w,w,w,hex(b.col),q.d-.3);fillD(q.X-w/2,Y-w*.25,w,w*.25,hex(b.dk),q.d-.3)}}
       /* street lamps: thin posts with a glowing lantern, depth-tested */
       if(s.lamps)for(const l of s.lamps){const ang=Math.atan2(l.y-cy,l.x-cx),rel=wrap(ang-yaw);if(Math.abs(rel)>hfov()/2+.1)continue;const dist=Math.hypot(l.x-cx,l.y-cy)*Math.cos(rel);if(dist<1.2)continue;
         const gz=s.G[I(l.x|0,l.y|0)],X=W/2+Math.tan(rel)*f,u=f/dist,yb=hor+(cz-gz)*u,pw=Math.max(1,.14*u);
